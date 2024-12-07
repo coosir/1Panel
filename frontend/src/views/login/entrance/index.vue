@@ -4,13 +4,13 @@
             <div v-if="errStatus === ''">
                 <div class="login-background">
                     <div class="login-wrapper">
-                        <div :class="screenWidth > 1110 ? 'left inline-block' : ''">
+                        <div :class="screenWidth > 1110 ? '' : ''">
                             <div class="login-title">
                                 <span>{{ globalStore.themeConfig.title || $t('setting.description') }}</span>
                             </div>
-                            <img src="@/assets/images/1panel-login.png" alt="" v-if="screenWidth > 1110" />
+                            <img src="@/assets/images/1panel-login.png" alt="" v-if="false" />
                         </div>
-                        <div :class="screenWidth > 1110 ? 'right inline-block' : ''">
+                        <div :class="screenWidth > 1110 ? '' : ''">
                             <div class="login-container">
                                 <LoginForm ref="loginRef"></LoginForm>
                             </div>
@@ -137,8 +137,8 @@ onMounted(() => {
     }
 
     .login-title {
-        text-align: right;
-        margin-right: 10%;
+        text-align: center;
+        margin-right: 0;
         span:first-child {
             color: #005eeb;
             font-size: 40px;
@@ -156,7 +156,7 @@ onMounted(() => {
         }
     }
     .login-container {
-        margin-top: 40px;
+        margin: 60px auto 0;
         padding: 40px 0;
         width: 390px;
         box-sizing: border-box;

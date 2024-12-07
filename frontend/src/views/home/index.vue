@@ -250,7 +250,7 @@
                     </template>
                 </CardWithHeader>
 
-                <CardWithHeader :header="$t('home.app')" style="margin-top: 20px">
+                <CardWithHeader :header="$t('home.app')" style="margin-top: 20px" v-if="false">
                     <template #body>
                         <App ref="appRef" />
                     </template>
