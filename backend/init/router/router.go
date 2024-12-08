@@ -182,6 +182,8 @@ func Routers() *gin.Engine {
 		PublicGroup.GET("/health", func(c *gin.Context) {
 			c.JSON(200, "ok")
 		})
+		PublicGroup.Static("/ht-store/repo", global.CONF.System.DataDir+"/store/repo")
+		PublicGroup.Static("/ht-store/app", global.CONF.System.DataDir+"/store/app")
 		PublicGroup.Use(gzip.Gzip(gzip.DefaultCompression))
 		setWebStatic(PublicGroup)
 	}

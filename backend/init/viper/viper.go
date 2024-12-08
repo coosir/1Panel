@@ -21,7 +21,7 @@ func Init() {
 	port := "9999"
 	mode := ""
 	version := "v1.0.0"
-	username, password, entrance, language := "", "", "", "zh"
+	username, password, entrance, language := "admin", "admin", "ht", "zh"
 	fileOp := files.NewFileOp()
 	v := viper.NewWithOptions()
 	v.SetConfigType("yaml")
@@ -40,13 +40,13 @@ func Init() {
 			panic(fmt.Errorf("Fatal error config file: %s \n", err))
 		}
 	} else {
-		baseDir = loadParams("BASE_DIR")
-		port = loadParams("ORIGINAL_PORT")
-		version = loadParams("ORIGINAL_VERSION")
-		username = loadParams("ORIGINAL_USERNAME")
-		password = loadParams("ORIGINAL_PASSWORD")
-		entrance = loadParams("ORIGINAL_ENTRANCE")
-		language = loadParams("LANGUAGE")
+		//baseDir = loadParams("BASE_DIR")
+		//port = loadParams("ORIGINAL_PORT")
+		//version = loadParams("ORIGINAL_VERSION")
+		//username = loadParams("ORIGINAL_USERNAME")
+		//password = loadParams("ORIGINAL_PASSWORD")
+		//entrance = loadParams("ORIGINAL_ENTRANCE")
+		//language = loadParams("LANGUAGE")
 
 		reader := bytes.NewReader(conf.AppYaml)
 		if err := v.ReadConfig(reader); err != nil {
