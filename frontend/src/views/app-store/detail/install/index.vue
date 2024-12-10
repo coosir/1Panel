@@ -192,12 +192,12 @@ const initData = () => ({
     memoryLimit: 0,
     memoryUnit: 'M',
     containerName: '',
-    allowPort: false,
+    allowPort: true,
     editCompose: false,
     dockerCompose: '',
     version: '',
     appID: '',
-    pullImage: true,
+    pullImage: false,
 });
 const req = reactive(initData());
 const limits = ref<Container.ResourceLimit>({
