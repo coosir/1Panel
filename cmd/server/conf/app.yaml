@@ -8,7 +8,7 @@ system:
   is_intl: true
   port: 9999
   username: admin
-  password: admin
+  password: Ht_123456
 
 log:
   level: debug
