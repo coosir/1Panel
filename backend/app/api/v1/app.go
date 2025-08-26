@@ -13,15 +13,16 @@ import (
 // @Summary List apps
 // @Accept json
 // @Param request body request.AppSearch true "request"
-// @Success 200
+// @Success 200 {object} response.AppRes
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /apps/search [post]
 func (b *BaseApi) SearchApp(c *gin.Context) {
 	var req request.AppSearch
 	if err := helper.CheckBindAndValidate(&req, c); err != nil {
 		return
 	}
-	list, err := appService.PageApp(req)
+	list, err := appService.PageApp(c, req)
 	if err != nil {
 		helper.ErrorWithDetail(c, constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
 		return
@@ -33,6 +34,7 @@ func (b *BaseApi) SearchApp(c *gin.Context) {
 // @Summary Sync app list
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /apps/sync [post]
 // @x-panel-log {"bodyKeys":[],"paramKeys":[],"BeforeFunctions":[],"formatZH":"应用商店同步","formatEN":"App store synchronization"}
 func (b *BaseApi) SyncApp(c *gin.Context) {
@@ -65,14 +67,15 @@ func (b *BaseApi) SyncApp(c *gin.Context) {
 // @Param key path string true "app key"
 // @Success 200 {object} response.AppDTO
 // @Security ApiKeyAuth
-// @Router /apps/:key [get]
+// @Security Timestamp
+// @Router /apps/{key} [get]
 func (b *BaseApi) GetApp(c *gin.Context) {
 	appKey, err := helper.GetStrParamByKey(c, "key")
 	if err != nil {
 		helper.ErrorWithDetail(c, constant.CodeErrBadRequest, constant.ErrTypeInvalidParams, err)
 		return
 	}
-	appDTO, err := appService.GetApp(appKey)
+	appDTO, err := appService.GetApp(c, appKey)
 	if err != nil {
 		helper.ErrorWithDetail(c, constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
 		return
@@ -85,10 +88,11 @@ func (b *BaseApi) GetApp(c *gin.Context) {
 // @Accept json
 // @Param appId path integer true "app id"
 // @Param version path string true "app version"
-// @Param version path string true "app type"
+// @Param type path string true "app type"
 // @Success 200 {object} response.AppDetailDTO
 // @Security ApiKeyAuth
-// @Router /apps/detail/:appId/:version/:type [get]
+// @Security Timestamp
+// @Router /apps/detail/{appId}/{version}/{type} [get]
 func (b *BaseApi) GetAppDetail(c *gin.Context) {
 	appID, err := helper.GetIntParamByKey(c, "appId")
 	if err != nil {
@@ -108,10 +112,11 @@ func (b *BaseApi) GetAppDetail(c *gin.Context) {
 // @Tags App
 // @Summary Get app detail by id
 // @Accept json
-// @Param appId path integer true "id"
+// @Param id path integer true "id"
 // @Success 200 {object} response.AppDetailDTO
 // @Security ApiKeyAuth
-// @Router /apps/details/:id [get]
+// @Security Timestamp
+// @Router /apps/details/{id} [get]
 func (b *BaseApi) GetAppDetailByID(c *gin.Context) {
 	appDetailID, err := helper.GetIntParamByKey(c, "id")
 	if err != nil {
@@ -131,6 +136,7 @@ func (b *BaseApi) GetAppDetailByID(c *gin.Context) {
 // @Accept json
 // @Success 200 {object} response.IgnoredApp
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /apps/ignored [get]
 func (b *BaseApi) GetIgnoredApp(c *gin.Context) {
 	res, err := appService.GetIgnoredApp()
@@ -147,6 +153,7 @@ func (b *BaseApi) GetIgnoredApp(c *gin.Context) {
 // @Param request body request.AppInstallCreate true "request"
 // @Success 200 {object} model.AppInstall
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /apps/install [post]
 // @x-panel-log {"bodyKeys":["name"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"安装应用 [name]","formatEN":"Install app [name]"}
 func (b *BaseApi) InstallApp(c *gin.Context) {
@@ -166,7 +173,7 @@ func (b *BaseApi) InstallApp(c *gin.Context) {
 }
 
 func (b *BaseApi) GetAppTags(c *gin.Context) {
-	tags, err := appService.GetAppTags()
+	tags, err := appService.GetAppTags(c)
 	if err != nil {
 		helper.ErrorWithDetail(c, constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
 		return
@@ -176,8 +183,9 @@ func (b *BaseApi) GetAppTags(c *gin.Context) {
 
 // @Tags App
 // @Summary Get app list update
-// @Success 200
+// @Success 200 {object} response.AppUpdateRes
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /apps/checkupdate [get]
 func (b *BaseApi) GetAppListUpdate(c *gin.Context) {
 	res, err := appService.GetAppUpdate()

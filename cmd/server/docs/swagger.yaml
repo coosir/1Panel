@@ -34,8 +34,39 @@ definitions:
         type: string
       apiKey:
         type: string
+      apiKeyValidityTime:
+        type: string
       ipWhiteList:
         type: string
+    type: object
+  dto.AppConfigVersion:
+    properties:
+      additionalProperties: {}
+      downloadCallBackUrl:
+        type: string
+      downloadUrl:
+        type: string
+      lastModified:
+        type: integer
+      name:
+        type: string
+    type: object
+  dto.AppDefine:
+    properties:
+      additionalProperties:
+        $ref: '#/definitions/dto.AppProperty'
+      icon:
+        type: string
+      lastModified:
+        type: integer
+      name:
+        type: string
+      readMe:
+        type: string
+      versions:
+        items:
+          $ref: '#/definitions/dto.AppConfigVersion'
+        type: array
     type: object
   dto.AppInstallInfo:
     properties:
@@ -44,6 +75,62 @@ definitions:
       key:
         type: string
       name:
+        type: string
+    type: object
+  dto.AppList:
+    properties:
+      additionalProperties:
+        $ref: '#/definitions/dto.ExtraProperties'
+      apps:
+        items:
+          $ref: '#/definitions/dto.AppDefine'
+        type: array
+      lastModified:
+        type: integer
+      valid:
+        type: boolean
+      violations:
+        items:
+          type: string
+        type: array
+    type: object
+  dto.AppProperty:
+    properties:
+      Required:
+        items:
+          type: string
+        type: array
+      crossVersionUpdate:
+        type: boolean
+      description:
+        $ref: '#/definitions/dto.Locale'
+      document:
+        type: string
+      github:
+        type: string
+      gpuSupport:
+        type: boolean
+      key:
+        type: string
+      limit:
+        type: integer
+      name:
+        type: string
+      recommend:
+        type: integer
+      shortDescEn:
+        type: string
+      shortDescZh:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      type:
+        type: string
+      version:
+        type: number
+      website:
         type: string
     type: object
   dto.AppResource:
@@ -61,6 +148,15 @@ definitions:
         type: string
       version:
         type: string
+    type: object
+  dto.BackupFile:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      size:
+        type: integer
     type: object
   dto.BackupInfo:
     properties:
@@ -345,6 +441,29 @@ definitions:
       treeType:
         type: string
     type: object
+  dto.CleanData:
+    properties:
+      containerClean:
+        items:
+          $ref: '#/definitions/dto.CleanTree'
+        type: array
+      downloadClean:
+        items:
+          $ref: '#/definitions/dto.CleanTree'
+        type: array
+      systemClean:
+        items:
+          $ref: '#/definitions/dto.CleanTree'
+        type: array
+      systemLogClean:
+        items:
+          $ref: '#/definitions/dto.CleanTree'
+        type: array
+      uploadClean:
+        items:
+          $ref: '#/definitions/dto.CleanTree'
+        type: array
+    type: object
   dto.CleanLog:
     properties:
       logType:
@@ -354,6 +473,27 @@ definitions:
         type: string
     required:
     - logType
+    type: object
+  dto.CleanTree:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/dto.CleanTree'
+        type: array
+      id:
+        type: string
+      isCheck:
+        type: boolean
+      isRecommend:
+        type: boolean
+      label:
+        type: string
+      name:
+        type: string
+      size:
+        type: integer
+      type:
+        type: string
     type: object
   dto.CommandInfo:
     properties:
@@ -383,6 +523,17 @@ definitions:
     required:
     - command
     - name
+    type: object
+  dto.CommandTree:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/dto.CommandInfo'
+        type: array
+      id:
+        type: integer
+      label:
+        type: string
     type: object
   dto.CommonBackup:
     properties:
@@ -1319,6 +1470,15 @@ definitions:
     - fileName
     - source
     type: object
+  dto.ExtraProperties:
+    properties:
+      tags:
+        items:
+          $ref: '#/definitions/dto.Tag'
+        type: array
+      version:
+        type: string
+    type: object
   dto.Fail2BanBaseInfo:
     properties:
       banAction:
@@ -1362,7 +1522,6 @@ definitions:
         - maxretry
         - banaction
         - logpath
-        - port
         type: string
       value:
         type: string
@@ -1408,8 +1567,19 @@ definitions:
     - type
     - vars
     type: object
+  dto.ForceDelete:
+    properties:
+      forceDelete:
+        type: boolean
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
   dto.ForwardRuleOperate:
     properties:
+      forceDelete:
+        type: boolean
       rules:
         items:
           properties:
@@ -1621,6 +1791,37 @@ definitions:
       ip:
         type: string
     type: object
+  dto.HostInfo:
+    properties:
+      addr:
+        type: string
+      authMode:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      groupBelong:
+        type: string
+      groupID:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      passPhrase:
+        type: string
+      password:
+        type: string
+      port:
+        type: integer
+      privateKey:
+        type: string
+      rememberPassword:
+        type: boolean
+      user:
+        type: string
+    type: object
   dto.HostOperate:
     properties:
       addr:
@@ -1797,6 +1998,25 @@ definitions:
     - id
     - type
     type: object
+  dto.Locale:
+    properties:
+      en:
+        type: string
+      ja:
+        type: string
+      ko:
+        type: string
+      ms:
+        type: string
+      pt-br:
+        type: string
+      ru:
+        type: string
+      zh:
+        type: string
+      zh-hant:
+        type: string
+    type: object
   dto.LogOption:
     properties:
       logMaxFile:
@@ -1822,6 +2042,11 @@ definitions:
         - zh
         - en
         - tw
+        - ja
+        - ko
+        - ru
+        - ms
+        - pt-BR
         type: string
       name:
         type: string
@@ -1860,6 +2085,26 @@ definitions:
     - code
     - interval
     - secret
+    type: object
+  dto.MonitorData:
+    properties:
+      date:
+        items:
+          type: string
+        type: array
+      param:
+        enum:
+        - cpu
+        - memory
+        - load
+        - io
+        - network
+        type: string
+      value:
+        items: {}
+        type: array
+    required:
+    - param
     type: object
   dto.MonitorSearch:
     properties:
@@ -2189,6 +2434,13 @@ definitions:
     - driver
     - name
     type: object
+  dto.NginxAuth:
+    properties:
+      remark:
+        type: string
+      username:
+        type: string
+    type: object
   dto.NginxKey:
     enum:
     - index
@@ -2205,6 +2457,58 @@ definitions:
     - CACHE
     - HttpPer
     - ProxyCache
+  dto.OllamaBindDomain:
+    properties:
+      appInstallID:
+        type: integer
+      domain:
+        type: string
+      ipList:
+        type: string
+      sslID:
+        type: integer
+      websiteID:
+        type: integer
+    required:
+    - appInstallID
+    - domain
+    type: object
+  dto.OllamaBindDomainReq:
+    properties:
+      appInstallID:
+        type: integer
+    required:
+    - appInstallID
+    type: object
+  dto.OllamaBindDomainRes:
+    properties:
+      acmeAccountID:
+        type: integer
+      allowIPs:
+        items:
+          type: string
+        type: array
+      connUrl:
+        type: string
+      domain:
+        type: string
+      sslID:
+        type: integer
+      websiteID:
+        type: integer
+    type: object
+  dto.OllamaModelDropList:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  dto.OllamaModelName:
+    properties:
+      name:
+        type: string
+    type: object
   dto.OneDriveInfo:
     properties:
       client_id:
@@ -2816,6 +3120,21 @@ definitions:
     required:
     - key
     type: object
+  dto.SSLInfo:
+    properties:
+      cert:
+        type: string
+      domain:
+        type: string
+      key:
+        type: string
+      rootPath:
+        type: string
+      sslID:
+        type: integer
+      timeout:
+        type: string
+    type: object
   dto.SSLUpdate:
     properties:
       autoRestart:
@@ -2977,6 +3296,8 @@ definitions:
         type: string
       apiKey:
         type: string
+      apiKeyValidityTime:
+        type: string
       appStoreLastModified:
         type: string
       appStoreSyncStatus:
@@ -3020,6 +3341,8 @@ definitions:
       lastCleanSize:
         type: string
       lastCleanTime:
+        type: string
+      licenseVerify:
         type: string
       localTime:
         type: string
@@ -3123,6 +3446,15 @@ definitions:
     - defaultDownload
     - from
     type: object
+  dto.SnapshotFile:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      size:
+        type: integer
+    type: object
   dto.SnapshotImport:
     properties:
       description:
@@ -3148,6 +3480,27 @@ definitions:
     required:
     - id
     type: object
+  dto.SnapshotStatus:
+    properties:
+      appData:
+        type: string
+      backupData:
+        type: string
+      compress:
+        type: string
+      daemonJson:
+        type: string
+      panel:
+        type: string
+      panelData:
+        type: string
+      panelInfo:
+        type: string
+      size:
+        type: string
+      upload:
+        type: string
+    type: object
   dto.SwapHelper:
     properties:
       isNew:
@@ -3160,6 +3513,17 @@ definitions:
         type: string
     required:
     - path
+    type: object
+  dto.Tag:
+    properties:
+      key:
+        type: string
+      locales:
+        $ref: '#/definitions/dto.Locale'
+      name:
+        type: string
+      sort:
+        type: integer
     type: object
   dto.TreeChild:
     properties:
@@ -3345,10 +3709,14 @@ definitions:
         type: string
       crossVersionUpdate:
         type: boolean
+      description:
+        type: string
       document:
         type: string
       github:
         type: string
+      gpuSupport:
+        type: boolean
       icon:
         type: string
       id:
@@ -3425,19 +3793,60 @@ definitions:
       version:
         type: string
     type: object
-  model.Tag:
+  model.Favorite:
     properties:
       createdAt:
         type: string
       id:
         type: integer
-      key:
+      isDir:
+        type: boolean
+      isTxt:
+        type: boolean
+      name:
+        type: string
+      path:
+        type: string
+      type:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.Runtime:
+    properties:
+      appDetailId:
+        type: integer
+      codeDir:
+        type: string
+      createdAt:
+        type: string
+      dockerCompose:
+        type: string
+      env:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      message:
         type: string
       name:
         type: string
-      sort:
+      params:
+        type: string
+      port:
         type: integer
+      resource:
+        type: string
+      status:
+        type: string
+      type:
+        type: string
       updatedAt:
+        type: string
+      version:
+        type: string
+      workDir:
         type: string
     type: object
   model.Website:
@@ -3635,6 +4044,8 @@ definitions:
         type: string
       editCompose:
         type: boolean
+      gpuConfig:
+        type: boolean
       hostMode:
         type: boolean
       memoryLimit:
@@ -3743,6 +4154,8 @@ definitions:
       dockerCompose:
         type: string
       editCompose:
+        type: boolean
+      gpuConfig:
         type: boolean
       hostMode:
         type: boolean
@@ -3977,6 +4390,15 @@ definitions:
     required:
     - path
     type: object
+  request.FilePathsCheck:
+    properties:
+      paths:
+        items:
+          type: string
+        type: array
+    required:
+    - paths
+    type: object
   request.FileReadByLineReq:
     properties:
       ID:
@@ -4123,6 +4545,8 @@ definitions:
       dockerCompose:
         type: string
       editCompose:
+        type: boolean
+      gpuConfig:
         type: boolean
       hostMode:
         type: boolean
@@ -4974,6 +5398,16 @@ definitions:
     - proxyHost
     - proxyPass
     type: object
+  request.WebsiteProxyDel:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    required:
+    - id
+    - name
+    type: object
   request.WebsiteProxyReq:
     properties:
       id:
@@ -5194,16 +5628,49 @@ definitions:
     - id
     - user
     type: object
+  response.AppConfig:
+    properties:
+      advanced:
+        type: boolean
+      allowPort:
+        type: boolean
+      containerName:
+        type: string
+      cpuQuota:
+        type: number
+      dockerCompose:
+        type: string
+      editCompose:
+        type: boolean
+      gpuConfig:
+        type: boolean
+      hostMode:
+        type: boolean
+      memoryLimit:
+        type: number
+      memoryUnit:
+        type: string
+      params:
+        items:
+          $ref: '#/definitions/response.AppParam'
+        type: array
+      pullImage:
+        type: boolean
+    type: object
   response.AppDTO:
     properties:
       createdAt:
         type: string
       crossVersionUpdate:
         type: boolean
+      description:
+        type: string
       document:
         type: string
       github:
         type: string
+      gpuSupport:
+        type: boolean
       icon:
         type: string
       id:
@@ -5234,7 +5701,7 @@ definitions:
         type: string
       tags:
         items:
-          $ref: '#/definitions/model.Tag'
+          $ref: '#/definitions/response.TagDTO'
         type: array
       type:
         type: string
@@ -5260,6 +5727,8 @@ definitions:
       downloadUrl:
         type: string
       enable:
+        type: boolean
+      gpuSupport:
         type: boolean
       hostMode:
         type: boolean
@@ -5310,6 +5779,39 @@ definitions:
       version:
         type: string
     type: object
+  response.AppItem:
+    properties:
+      description:
+        type: string
+      gpuSupport:
+        type: boolean
+      icon:
+        type: string
+      id:
+        type: integer
+      installed:
+        type: boolean
+      key:
+        type: string
+      limit:
+        type: integer
+      name:
+        type: string
+      resource:
+        type: string
+      status:
+        type: string
+      tags:
+        items:
+          $ref: '#/definitions/response.TagDTO'
+        type: array
+      type:
+        type: string
+      versions:
+        items:
+          type: string
+        type: array
+    type: object
   response.AppParam:
     properties:
       edit:
@@ -5333,6 +5835,15 @@ definitions:
       value: {}
       values: {}
     type: object
+  response.AppRes:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/response.AppItem'
+        type: array
+      total:
+        type: integer
+    type: object
   response.AppService:
     properties:
       config: {}
@@ -5342,6 +5853,50 @@ definitions:
         type: string
       value:
         type: string
+    type: object
+  response.AppUpdateRes:
+    properties:
+      appList:
+        $ref: '#/definitions/dto.AppList'
+      appStoreLastModified:
+        type: integer
+      canUpdate:
+        type: boolean
+      isSyncing:
+        type: boolean
+    type: object
+  response.DatabaseConn:
+    properties:
+      containerName:
+        type: string
+      password:
+        type: string
+      port:
+        type: integer
+      serviceName:
+        type: string
+      status:
+        type: string
+      username:
+        type: string
+    type: object
+  response.DirSizeRes:
+    properties:
+      size:
+        type: number
+    required:
+    - size
+    type: object
+  response.ExistFileInfo:
+    properties:
+      modTime:
+        type: string
+      name:
+        type: string
+      path:
+        type: string
+      size:
+        type: number
     type: object
   response.FileInfo:
     properties:
@@ -5392,6 +5947,21 @@ definitions:
       user:
         type: string
     type: object
+  response.FileLineContent:
+    properties:
+      content:
+        type: string
+      end:
+        type: boolean
+      lines:
+        items:
+          type: string
+        type: array
+      path:
+        type: string
+      total:
+        type: integer
+    type: object
   response.FileTree:
     properties:
       children:
@@ -5409,6 +5979,22 @@ definitions:
       path:
         type: string
     type: object
+  response.FileWgetRes:
+    properties:
+      key:
+        type: string
+    type: object
+  response.HostToolConfig:
+    properties:
+      content:
+        type: string
+    type: object
+  response.HostToolRes:
+    properties:
+      config: {}
+      type:
+        type: string
+    type: object
   response.IgnoredApp:
     properties:
       detailID:
@@ -5420,6 +6006,45 @@ definitions:
       version:
         type: string
     type: object
+  response.NginxAntiLeechRes:
+    properties:
+      blocked:
+        type: boolean
+      cache:
+        type: boolean
+      cacheTime:
+        type: integer
+      cacheUint:
+        type: string
+      enable:
+        type: boolean
+      extends:
+        type: string
+      logEnable:
+        type: boolean
+      noneRef:
+        type: boolean
+      return:
+        type: string
+      serverNames:
+        items:
+          type: string
+        type: array
+    type: object
+  response.NginxAuthRes:
+    properties:
+      enable:
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/dto.NginxAuth'
+        type: array
+    type: object
+  response.NginxFile:
+    properties:
+      content:
+        type: string
+    type: object
   response.NginxParam:
     properties:
       name:
@@ -5428,6 +6053,40 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  response.NginxRedirectConfig:
+    properties:
+      content:
+        type: string
+      domains:
+        items:
+          type: string
+        type: array
+      enable:
+        type: boolean
+      filePath:
+        type: string
+      keepPath:
+        type: boolean
+      name:
+        type: string
+      path:
+        type: string
+      redirect:
+        type: string
+      redirectRoot:
+        type: boolean
+      target:
+        type: string
+      type:
+        type: string
+      websiteID:
+        type: integer
+    type: object
+  response.NginxRewriteRes:
+    properties:
+      content:
+        type: string
     type: object
   response.NginxStatus:
     properties:
@@ -5446,6 +6105,17 @@ definitions:
       writing:
         type: string
     type: object
+  response.NodeModule:
+    properties:
+      description:
+        type: string
+      license:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+    type: object
   response.PHPConfig:
     properties:
       disableFunctions:
@@ -5459,17 +6129,96 @@ definitions:
       uploadMaxSize:
         type: string
     type: object
-  response.PHPExtensionsDTO:
+  response.PackageScripts:
     properties:
-      createdAt:
-        type: string
-      extensions:
-        type: string
-      id:
-        type: integer
       name:
         type: string
-      updatedAt:
+      script:
+        type: string
+    type: object
+  response.ProcessStatus:
+    properties:
+      PID:
+        type: string
+      msg:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+      uptime:
+        type: string
+    type: object
+  response.RuntimeDTO:
+    properties:
+      appDetailID:
+        type: integer
+      appID:
+        type: integer
+      appParams:
+        items:
+          $ref: '#/definitions/response.AppParam'
+        type: array
+      codeDir:
+        type: string
+      createdAt:
+        type: string
+      exposedPorts:
+        items:
+          $ref: '#/definitions/request.ExposedPort'
+        type: array
+      id:
+        type: integer
+      image:
+        type: string
+      message:
+        type: string
+      name:
+        type: string
+      params:
+        additionalProperties: true
+        type: object
+      path:
+        type: string
+      port:
+        type: integer
+      resource:
+        type: string
+      source:
+        type: string
+      status:
+        type: string
+      type:
+        type: string
+      version:
+        type: string
+    type: object
+  response.SupervisorProcessConfig:
+    properties:
+      command:
+        type: string
+      dir:
+        type: string
+      msg:
+        type: string
+      name:
+        type: string
+      numprocs:
+        type: string
+      status:
+        items:
+          $ref: '#/definitions/response.ProcessStatus'
+        type: array
+      user:
+        type: string
+    type: object
+  response.TagDTO:
+    properties:
+      id:
+        type: integer
+      key:
+        type: string
+      name:
         type: string
     type: object
   response.WebsiteAcmeAccountDTO:
@@ -5604,6 +6353,19 @@ definitions:
       webSiteSSLId:
         type: integer
     type: object
+  response.WebsiteDirConfig:
+    properties:
+      dirs:
+        items:
+          type: string
+        type: array
+      msg:
+        type: string
+      user:
+        type: string
+      userGroup:
+        type: string
+    type: object
   response.WebsiteHTTPS:
     properties:
       SSL:
@@ -5619,6 +6381,11 @@ definitions:
       hsts:
         type: boolean
       httpConfig:
+        type: string
+    type: object
+  response.WebsiteHtmlRes:
+    properties:
+      content:
         type: string
     type: object
   response.WebsiteLog:
@@ -5641,6 +6408,15 @@ definitions:
           $ref: '#/definitions/response.NginxParam'
         type: array
     type: object
+  response.WebsiteOption:
+    properties:
+      alias:
+        type: string
+      id:
+        type: integer
+      primaryDomain:
+        type: string
+    type: object
   response.WebsitePreInstallCheck:
     properties:
       appName:
@@ -5652,17 +6428,322 @@ definitions:
       version:
         type: string
     type: object
+  response.WebsiteSSLDTO:
+    properties:
+      acmeAccount:
+        $ref: '#/definitions/model.WebsiteAcmeAccount'
+      acmeAccountId:
+        type: integer
+      autoRenew:
+        type: boolean
+      caId:
+        type: integer
+      certURL:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      dir:
+        type: string
+      disableCNAME:
+        type: boolean
+      dnsAccount:
+        $ref: '#/definitions/model.WebsiteDnsAccount'
+      dnsAccountId:
+        type: integer
+      domains:
+        type: string
+      execShell:
+        type: boolean
+      expireDate:
+        type: string
+      id:
+        type: integer
+      keyType:
+        type: string
+      logPath:
+        type: string
+      message:
+        type: string
+      nameserver1:
+        type: string
+      nameserver2:
+        type: string
+      organization:
+        type: string
+      pem:
+        type: string
+      primaryDomain:
+        type: string
+      privateKey:
+        type: string
+      provider:
+        type: string
+      pushDir:
+        type: boolean
+      shell:
+        type: string
+      skipDNS:
+        type: boolean
+      startDate:
+        type: string
+      status:
+        type: string
+      type:
+        type: string
+      updatedAt:
+        type: string
+      websites:
+        items:
+          $ref: '#/definitions/model.Website'
+        type: array
+    type: object
 info:
   contact: {}
-  description: Open Source Linux Panel
+  description: Top-Rated Web-based Linux Server Management Tool
   license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.html
   termsOfService: http://swagger.io/terms/
   title: 1Panel
   version: "1.0"
 paths:
-  /apps/:key:
+  /ai/domain/bind:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OllamaBindDomain'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Bind domain
+      tags:
+      - AI
+  /ai/domain/get:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OllamaBindDomainReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.OllamaBindDomainRes'
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Get bind domain
+      tags:
+      - AI
+  /ai/gpu/load:
+    get:
+      consumes:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Load gpu / xpu info
+      tags:
+      - AI
+  /ai/ollama/model:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OllamaModelName'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Create Ollama model
+      tags:
+      - AI
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys:
+        - name
+        formatEN: add Ollama model [name]
+        formatZH: 添加 Ollama 模型 [name]
+        paramKeys: []
+  /ai/ollama/model/close:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OllamaModelName'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Close Ollama model conn
+      tags:
+      - AI
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys:
+        - name
+        formatEN: close conn for Ollama model [name]
+        formatZH: 关闭 Ollama 模型连接 [name]
+        paramKeys: []
+  /ai/ollama/model/del:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ForceDelete'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Delete Ollama model
+      tags:
+      - AI
+      x-panel-log:
+        BeforeFunctions:
+        - db: ollama_models
+          input_column: id
+          input_value: ids
+          isList: true
+          output_column: name
+          output_value: names
+        bodyKeys:
+        - ids
+        formatEN: remove Ollama model [names]
+        formatZH: 删除 Ollama 模型 [names]
+        paramKeys: []
+  /ai/ollama/model/load:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OllamaModelName'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Page Ollama models
+      tags:
+      - AI
+  /ai/ollama/model/recreate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OllamaModelName'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Rereate Ollama model
+      tags:
+      - AI
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys:
+        - name
+        formatEN: re-add Ollama model [name]
+        formatZH: 添加 Ollama 模型重试 [name]
+        paramKeys: []
+  /ai/ollama/model/search:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SearchWithPage'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PageResult'
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Page Ollama models
+      tags:
+      - AI
+  /ai/ollama/model/sync:
+    post:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.OllamaModelDropList'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Sync Ollama model list
+      tags:
+      - AI
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys: []
+        formatEN: sync Ollama model list
+        formatZH: 同步 Ollama 模型列表
+        paramKeys: []
+  /apps/{key}:
     get:
       consumes:
       - application/json
@@ -5679,6 +6760,7 @@ paths:
             $ref: '#/definitions/response.AppDTO'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search app by key
       tags:
       - App
@@ -5687,12 +6769,15 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.AppUpdateRes'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get app list update
       tags:
       - App
-  /apps/detail/:appId/:version/:type:
+  /apps/detail/{appId}/{version}/{type}:
     get:
       consumes:
       - application/json
@@ -5709,7 +6794,7 @@ paths:
         type: string
       - description: app type
         in: path
-        name: version
+        name: type
         required: true
         type: string
       responses:
@@ -5719,17 +6804,18 @@ paths:
             $ref: '#/definitions/response.AppDetailDTO'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search app detail by appid
       tags:
       - App
-  /apps/details/:id:
+  /apps/details/{id}:
     get:
       consumes:
       - application/json
       parameters:
       - description: id
         in: path
-        name: appId
+        name: id
         required: true
         type: integer
       responses:
@@ -5739,6 +6825,7 @@ paths:
             $ref: '#/definitions/response.AppDetailDTO'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get app detail by id
       tags:
       - App
@@ -5753,6 +6840,7 @@ paths:
             $ref: '#/definitions/response.IgnoredApp'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get Ignore App
       tags:
       - App
@@ -5774,6 +6862,7 @@ paths:
             $ref: '#/definitions/model.AppInstall'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Install app
       tags:
       - App
@@ -5802,6 +6891,7 @@ paths:
             $ref: '#/definitions/response.AppInstalledCheck'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Check app installed
       tags:
       - App
@@ -5823,10 +6913,11 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search default config by key
       tags:
       - App
-  /apps/installed/conninfo/:key:
+  /apps/installed/conninfo/{key}:
     get:
       consumes:
       - application/json
@@ -5837,17 +6928,23 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.OperationWithNameAndType'
+      - description: key
+        in: path
+        name: key
+        required: true
+        type: string
       responses:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/response.DatabaseConn'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search app password by key
       tags:
       - App
-  /apps/installed/delete/check/:appInstallId:
+  /apps/installed/delete/check/{appInstallId}:
     get:
       consumes:
       - application/json
@@ -5866,6 +6963,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Check before delete
       tags:
       - App
@@ -5885,6 +6983,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: ignore App Update
       tags:
       - App
@@ -5908,6 +7007,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List app installed
       tags:
       - App
@@ -5929,6 +7029,7 @@ paths:
             type: integer
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search app port by key
       tags:
       - App
@@ -5948,6 +7049,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate installed app
       tags:
       - App
@@ -5977,7 +7079,7 @@ paths:
         formatEN: '[operate] App [appKey][appName]'
         formatZH: '[operate] 应用 [appKey][appName]'
         paramKeys: []
-  /apps/installed/params/:appInstallId:
+  /apps/installed/params/{appInstallId}:
     get:
       consumes:
       - application/json
@@ -5991,9 +7093,10 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.AppParam'
+            $ref: '#/definitions/response.AppConfig'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search params by appInstallId
       tags:
       - App
@@ -6013,6 +7116,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Change app params
       tags:
       - App
@@ -6039,6 +7143,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Change app port
       tags:
       - App
@@ -6065,8 +7170,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page app installed
       tags:
       - App
@@ -6077,6 +7185,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Sync app installed
       tags:
       - App
@@ -6090,12 +7199,6 @@ paths:
     post:
       consumes:
       - application/json
-      parameters:
-      - description: request
-        in: path
-        name: appInstallId
-        required: true
-        type: integer
       responses:
         "200":
           description: OK
@@ -6105,6 +7208,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search app update version by install id
       tags:
       - App
@@ -6122,12 +7226,15 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.AppRes'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List apps
       tags:
       - App
-  /apps/services/:key:
+  /apps/services/{key}:
     get:
       consumes:
       - application/json
@@ -6146,6 +7253,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search app service by key
       tags:
       - App
@@ -6156,6 +7264,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Sync app list
       tags:
       - App
@@ -6180,6 +7289,8 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: boolean
       summary: Check System isDemo
       tags:
       - Auth
@@ -6188,6 +7299,8 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: boolean
       summary: Check System isIntl
       tags:
       - Auth
@@ -6196,6 +7309,8 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       summary: Load System Language
       tags:
       - Auth
@@ -6230,6 +7345,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: User logout
       tags:
       - Auth
@@ -6271,6 +7387,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create container
       tags:
       - Container
@@ -6298,6 +7415,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Clean container log
       tags:
       - Container
@@ -6339,8 +7457,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create compose
       tags:
       - Container Compose
@@ -6367,6 +7488,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate compose
       tags:
       - Container Compose
@@ -6396,6 +7518,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page composes
       tags:
       - Container Compose
@@ -6418,9 +7541,12 @@ paths:
         in: query
         name: tail
         type: string
-      responses: {}
+      responses:
+        "200":
+          description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Container Compose logs
       tags:
       - Container Compose
@@ -6438,8 +7564,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: boolean
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Test compose
       tags:
       - Container Compose
@@ -6466,6 +7595,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update Container Compose
       tags:
       - Container Compose
@@ -6487,6 +7617,7 @@ paths:
             $ref: '#/definitions/dto.DaemonJsonConf'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load docker daemon.json
       tags:
       - Container Docker
@@ -6501,6 +7632,7 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load docker daemon.json
       tags:
       - Container Docker
@@ -6520,6 +7652,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update docker daemon.json
       tags:
       - Container Docker
@@ -6547,6 +7680,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update docker daemon.json by upload file
       tags:
       - Container Docker
@@ -6572,6 +7706,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate docker
       tags:
       - Container Docker
@@ -6593,6 +7728,7 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load docker status
       tags:
       - Container Docker
@@ -6607,9 +7743,12 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.ContainerLog'
-      responses: {}
+      responses:
+        "200":
+          description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Download Container logs
       tags:
       - Container
@@ -6626,6 +7765,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: load images options
       tags:
       - Container Image
@@ -6642,6 +7782,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List all images
       tags:
       - Container Image
@@ -6663,6 +7804,7 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Build image
       tags:
       - Container Image
@@ -6689,6 +7831,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load image
       tags:
       - Container Image
@@ -6717,6 +7860,7 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Pull image
       tags:
       - Container Image
@@ -6752,6 +7896,7 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Push image
       tags:
       - Container Image
@@ -6786,6 +7931,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete image
       tags:
       - Container Image
@@ -6812,6 +7958,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Save image
       tags:
       - Container Image
@@ -6844,6 +7991,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page images
       tags:
       - Container Image
@@ -6863,6 +8011,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Tag image
       tags:
       - Container Image
@@ -6898,6 +8047,7 @@ paths:
             $ref: '#/definitions/dto.ContainerOperate'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load container info
       tags:
       - Container
@@ -6919,6 +8069,7 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Container inspect
       tags:
       - Container
@@ -6938,6 +8089,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update docker daemon.json ipv6 option
       tags:
       - Container Docker
@@ -6956,6 +8108,7 @@ paths:
             $ref: '#/definitions/dto.ResourceLimit'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load container limits
   /containers/list:
     post:
@@ -6966,8 +8119,13 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              type: string
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List containers
       tags:
       - Container
@@ -6982,6 +8140,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load container stats
   /containers/load/log:
     post:
@@ -6997,8 +8156,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load container log
       tags:
       - Container
@@ -7018,6 +8180,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update docker daemon.json log option
       tags:
       - Container Docker
@@ -7042,6 +8205,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List networks
       tags:
       - Container Network
@@ -7060,6 +8224,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create network
       tags:
       - Container Network
@@ -7086,6 +8251,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete network
       tags:
       - Container Network
@@ -7116,6 +8282,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page networks
       tags:
       - Container Network
@@ -7135,6 +8302,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate Container
       tags:
       - Container
@@ -7164,6 +8332,7 @@ paths:
             $ref: '#/definitions/dto.ContainerPruneReport'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Clean container
       tags:
       - Container
@@ -7190,6 +8359,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Rename Container
       tags:
       - Container
@@ -7214,6 +8384,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List image repos
       tags:
       - Container Image-repo
@@ -7234,6 +8405,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create image repo
       tags:
       - Container Image-repo
@@ -7262,6 +8434,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete image repo
       tags:
       - Container Image-repo
@@ -7298,6 +8471,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page image repos
       tags:
       - Container Image-repo
@@ -7319,6 +8493,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load repo status
       tags:
       - Container Image-repo
@@ -7340,6 +8515,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update image repo
       tags:
       - Container Image-repo
@@ -7376,6 +8552,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page containers
       tags:
       - Container
@@ -7398,20 +8575,23 @@ paths:
         in: query
         name: tail
         type: string
-      responses: {}
+      responses:
+        "200":
+          description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Container logs
       tags:
       - Container
-  /containers/stats/:id:
+  /containers/stats/{id}:
     get:
       parameters:
       - description: container id
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       responses:
         "200":
           description: OK
@@ -7419,6 +8599,7 @@ paths:
             $ref: '#/definitions/dto.ContainerStats'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Container stats
       tags:
       - Container
@@ -7435,6 +8616,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List compose templates
       tags:
       - Container Compose-template
@@ -7453,6 +8635,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create compose template
       tags:
       - Container Compose-template
@@ -7479,6 +8662,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete compose template
       tags:
       - Container Compose-template
@@ -7515,6 +8699,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page compose templates
       tags:
       - Container Compose-template
@@ -7534,6 +8719,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update compose template
       tags:
       - Container Compose-template
@@ -7566,6 +8752,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update container
       tags:
       - Container
@@ -7593,6 +8780,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Upgrade container
       tags:
       - Container
@@ -7619,6 +8807,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List Container Volumes
       tags:
       - Container Volume
@@ -7637,6 +8826,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create Container Volume
       tags:
       - Container Volume
@@ -7663,6 +8853,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete Container Volume
       tags:
       - Container Volume
@@ -7693,6 +8884,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page Container Volumes
       tags:
       - Container Volume
@@ -7712,6 +8904,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create cronjob
       tags:
       - Cronjob
@@ -7739,6 +8932,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete cronjob
       tags:
       - Cronjob
@@ -7771,6 +8965,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Download cronjob records
       tags:
       - Cronjob
@@ -7803,6 +8998,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Handle cronjob once
       tags:
       - Cronjob
@@ -7835,6 +9031,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Clean job records
       tags:
       - Cronjob
@@ -7865,8 +9062,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load Cronjob record log
       tags:
       - Cronjob
@@ -7888,6 +9088,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page cronjobs
       tags:
       - Cronjob
@@ -7909,6 +9110,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page job records
       tags:
       - Cronjob
@@ -7928,6 +9130,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update cronjob status
       tags:
       - Cronjob
@@ -7961,6 +9164,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update cronjob
       tags:
       - Cronjob
@@ -7977,7 +9181,7 @@ paths:
         formatEN: update cronjob [name]
         formatZH: 更新计划任务 [name]
         paramKeys: []
-  /dashboard/base/:ioOption/:netOption:
+  /dashboard/base/{ioOption}/{netOption}:
     get:
       consumes:
       - application/json
@@ -7999,6 +9203,7 @@ paths:
             $ref: '#/definitions/dto.DashboardBase'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load dashboard base info
       tags:
       - Dashboard
@@ -8013,6 +9218,7 @@ paths:
             $ref: '#/definitions/dto.OsInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load os info
       tags:
       - Dashboard
@@ -8034,10 +9240,11 @@ paths:
             $ref: '#/definitions/dto.DashboardCurrent'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load dashboard current info
       tags:
       - Dashboard
-  /dashboard/system/restart/:operation:
+  /dashboard/system/restart/{operation}:
     post:
       consumes:
       - application/json
@@ -8052,6 +9259,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: System restart panel
       tags:
       - Dashboard
@@ -8071,6 +9279,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create mysql database
       tags:
       - Database Mysql
@@ -8097,6 +9306,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Bind user of mysql database
       tags:
       - Database Mysql
@@ -8124,6 +9334,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Change mysql access
       tags:
       - Database Mysql
@@ -8156,6 +9367,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Change mysql password
       tags:
       - Database Mysql
@@ -8190,6 +9402,7 @@ paths:
             $ref: '#/definitions/dto.DBBaseInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load base info
       tags:
       - Database Common
@@ -8207,8 +9420,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load Database conf
       tags:
       - Database Common
@@ -8228,6 +9444,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update conf by upload file
       tags:
       - Database Common
@@ -8255,6 +9472,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create database
       tags:
       - Database
@@ -8266,8 +9484,14 @@ paths:
         formatEN: create database [name][type]
         formatZH: 创建远程数据库 [name][type]
         paramKeys: []
-  /databases/db/:name:
+  /databases/db/{name}:
     get:
+      parameters:
+      - description: name
+        in: path
+        name: name
+        required: true
+        type: string
       responses:
         "200":
           description: OK
@@ -8275,6 +9499,7 @@ paths:
             $ref: '#/definitions/dto.DatabaseInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get databases
       tags:
       - Database
@@ -8292,8 +9517,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: boolean
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Check database
       tags:
       - Database
@@ -8321,6 +9549,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete database
       tags:
       - Database
@@ -8337,8 +9566,14 @@ paths:
         formatEN: delete database [names]
         formatZH: 删除远程数据库 [names]
         paramKeys: []
-  /databases/db/item/:type:
+  /databases/db/item/{type}:
     get:
+      parameters:
+      - description: type
+        in: path
+        name: type
+        required: true
+        type: string
       responses:
         "200":
           description: OK
@@ -8348,11 +9583,18 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Retrieve database list based on type
       tags:
       - Database
-  /databases/db/list/:type:
+  /databases/db/list/{type}:
     get:
+      parameters:
+      - description: type
+        in: path
+        name: type
+        required: true
+        type: string
       responses:
         "200":
           description: OK
@@ -8362,6 +9604,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List databases
       tags:
       - Database
@@ -8383,6 +9626,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page databases
       tags:
       - Database
@@ -8402,6 +9646,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update database
       tags:
       - Database
@@ -8428,6 +9673,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete mysql database
       tags:
       - Database Mysql
@@ -8464,6 +9710,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Check before delete mysql database
       tags:
       - Database Mysql
@@ -8483,6 +9730,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update mysql database description
       tags:
       - Database Mysql
@@ -8511,9 +9759,12 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.MysqlLoadDB'
-      responses: {}
+      responses:
+        "200":
+          description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load mysql database from remote
       tags:
       - Database Mysql
@@ -8537,6 +9788,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List mysql database names
       tags:
       - Database Mysql
@@ -8556,6 +9808,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create postgresql database
       tags:
       - Database Postgresql
@@ -8566,7 +9819,7 @@ paths:
         formatEN: create postgresql database [name]
         formatZH: 创建 postgresql 数据库 [name]
         paramKeys: []
-  /databases/pg/:database/load:
+  /databases/pg/{database}/load:
     post:
       consumes:
       - application/json
@@ -8577,9 +9830,17 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.PostgresqlLoadDB'
-      responses: {}
+      - description: database
+        in: path
+        name: database
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load postgresql database from remote
       tags:
       - Database Postgresql
@@ -8599,6 +9860,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Bind postgresql user
       tags:
       - Database Postgresql
@@ -8626,6 +9888,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete postgresql database
       tags:
       - Database Postgresql
@@ -8662,6 +9925,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Check before delete postgresql database
       tags:
       - Database Postgresql
@@ -8681,6 +9945,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update postgresql database description
       tags:
       - Database Postgresql
@@ -8715,6 +9980,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Change postgresql password
       tags:
       - Database Postgresql
@@ -8747,6 +10013,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Change postgresql privileges
       tags:
       - Database Postgresql
@@ -8776,6 +10043,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page postgresql databases
       tags:
       - Database Postgresql
@@ -8797,6 +10065,7 @@ paths:
             $ref: '#/definitions/dto.RedisConf'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load redis conf
       tags:
       - Database Redis
@@ -8816,6 +10085,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update redis conf
       tags:
       - Database Redis
@@ -8832,6 +10102,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Install redis-cli
       tags:
       - Database Redis
@@ -8851,6 +10122,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Change redis password
       tags:
       - Database Redis
@@ -8878,6 +10150,7 @@ paths:
             $ref: '#/definitions/dto.RedisPersistence'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load redis persistence conf
       tags:
       - Database Redis
@@ -8897,6 +10170,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update redis persistence conf
       tags:
       - Database Redis
@@ -8924,6 +10198,7 @@ paths:
             $ref: '#/definitions/dto.RedisStatus'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load redis status info
       tags:
       - Database Redis
@@ -8945,6 +10220,7 @@ paths:
             type: boolean
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load mysql remote access
       tags:
       - Database Mysql
@@ -8966,6 +10242,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page mysql databases
       tags:
       - Database Mysql
@@ -8987,6 +10264,7 @@ paths:
             $ref: '#/definitions/dto.MysqlStatus'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load mysql status info
       tags:
       - Database Mysql
@@ -9008,6 +10286,7 @@ paths:
             $ref: '#/definitions/dto.MysqlVariables'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load mysql variables info
       tags:
       - Database Mysql
@@ -9027,6 +10306,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update mysql variables
       tags:
       - Database Mysql
@@ -9056,6 +10336,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Check before delete remote database
       tags:
       - Database
@@ -9075,6 +10356,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create file
       tags:
       - File
@@ -9085,6 +10367,30 @@ paths:
         formatEN: Create dir or file [path]
         formatZH: 创建文件/文件夹 [path]
         paramKeys: []
+  /files/batch/check:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.FilePathsCheck'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.ExistFileInfo'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Batch check file exist
+      tags:
+      - File
   /files/batch/del:
     post:
       consumes:
@@ -9101,6 +10407,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Batch delete file
       tags:
       - File
@@ -9127,6 +10434,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Batch change file mode and owner
       tags:
       - File
@@ -9154,8 +10462,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: boolean
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Check file exist
       tags:
       - File
@@ -9175,6 +10486,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Chunk Download file
       tags:
       - File
@@ -9187,6 +10499,8 @@ paths:
         paramKeys: []
   /files/chunkupload:
     post:
+      consumes:
+      - multipart/form-data
       parameters:
       - description: request
         in: formData
@@ -9198,6 +10512,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Chunk upload file
       tags:
       - File
@@ -9217,6 +10532,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Compress file
       tags:
       - File
@@ -9245,6 +10561,7 @@ paths:
             $ref: '#/definitions/response.FileInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load file content
       tags:
       - File
@@ -9271,6 +10588,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Decompress file
       tags:
       - File
@@ -9297,6 +10615,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete file
       tags:
       - File
@@ -9316,6 +10635,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Download file
       tags:
       - File
@@ -9333,8 +10653,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/model.Favorite'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create favorite
       tags:
       - File
@@ -9361,6 +10684,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete favorite
       tags:
       - File
@@ -9391,8 +10715,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List favorites
       tags:
       - File
@@ -9412,6 +10739,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Change file mode
       tags:
       - File
@@ -9439,6 +10767,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Move file
       tags:
       - File
@@ -9466,6 +10795,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Change file owner
       tags:
       - File
@@ -9490,8 +10820,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.FileLineContent'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Read file by Line
       tags:
       - File
@@ -9504,6 +10837,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Clear Recycle Bin files
       tags:
       - File
@@ -9529,6 +10863,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Reduce Recycle Bin files
       tags:
       - File
@@ -9553,8 +10888,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List Recycle Bin files
       tags:
       - File
@@ -9565,8 +10903,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get Recycle Bin status
       tags:
       - File
@@ -9586,6 +10927,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Change file name
       tags:
       - File
@@ -9613,6 +10955,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update file content
       tags:
       - File
@@ -9641,6 +10984,7 @@ paths:
             $ref: '#/definitions/response.FileInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List files
       tags:
       - File
@@ -9658,8 +11002,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.DirSizeRes'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load file size
       tags:
       - File
@@ -9690,11 +11037,14 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load files tree
       tags:
       - File
   /files/upload:
     post:
+      consumes:
+      - multipart/form-data
       parameters:
       - description: request
         in: formData
@@ -9706,6 +11056,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Upload file
       tags:
       - File
@@ -9731,11 +11082,10 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/response.FileInfo'
-            type: array
+            $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page file
       tags:
       - File
@@ -9753,8 +11103,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.FileWgetRes'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Wget file
       tags:
       - File
@@ -9783,6 +11136,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create system group
       tags:
       - System Group
@@ -9810,6 +11164,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete system group
       tags:
       - System Group
@@ -9852,6 +11207,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List system groups
       tags:
       - System Group
@@ -9871,6 +11227,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update system group
       tags:
       - System Group
@@ -9881,349 +11238,6 @@ paths:
         - type
         formatEN: update group [name][type]
         formatZH: 更新组 [name][type]
-        paramKeys: []
-  /host/conffile/update:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.SSHConf'
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Update host SSH setting by file
-      tags:
-      - SSH
-      x-panel-log:
-        BeforeFunctions: []
-        bodyKeys: []
-        formatEN: update SSH conf
-        formatZH: 修改 SSH 配置文件
-        paramKeys: []
-  /host/ssh/conf:
-    get:
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Load host SSH conf
-      tags:
-      - SSH
-  /host/ssh/generate:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.GenerateSSH'
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Generate host SSH secret
-      tags:
-      - SSH
-      x-panel-log:
-        BeforeFunctions: []
-        bodyKeys: []
-        formatEN: generate SSH secret
-        formatZH: '生成 SSH 密钥 '
-        paramKeys: []
-  /host/ssh/log:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.SearchSSHLog'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.SSHLog'
-      security:
-      - ApiKeyAuth: []
-      summary: Load host SSH logs
-      tags:
-      - SSH
-  /host/ssh/operate:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.Operate'
-      responses: {}
-      security:
-      - ApiKeyAuth: []
-      summary: Operate SSH
-      tags:
-      - SSH
-      x-panel-log:
-        BeforeFunctions: []
-        bodyKeys:
-        - operation
-        formatEN: '[operation] SSH'
-        formatZH: '[operation] SSH '
-        paramKeys: []
-  /host/ssh/search:
-    post:
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.SSHInfo'
-      security:
-      - ApiKeyAuth: []
-      summary: Load host SSH setting info
-      tags:
-      - SSH
-  /host/ssh/secret:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.GenerateLoad'
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Load host SSH secret
-      tags:
-      - SSH
-  /host/ssh/update:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.SSHUpdate'
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Update host SSH setting
-      tags:
-      - SSH
-      x-panel-log:
-        BeforeFunctions: []
-        bodyKeys:
-        - key
-        - value
-        formatEN: update SSH setting [key] => [value]
-        formatZH: 修改 SSH 配置 [key] => [value]
-        paramKeys: []
-  /host/tool:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/request.HostToolReq'
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Get tool status
-      tags:
-      - Host tool
-  /host/tool/config:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/request.HostToolConfig'
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Get tool config
-      tags:
-      - Host tool
-      x-panel-log:
-        BeforeFunctions: []
-        bodyKeys:
-        - operate
-        formatEN: '[operate] tool config'
-        formatZH: '[operate] 主机工具配置文件 '
-        paramKeys: []
-  /host/tool/create:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/request.HostToolCreate'
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Create Host tool Config
-      tags:
-      - Host tool
-      x-panel-log:
-        BeforeFunctions: []
-        bodyKeys:
-        - type
-        formatEN: create [type] config
-        formatZH: 创建 [type] 配置
-        paramKeys: []
-  /host/tool/log:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/request.HostToolLogReq'
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Get tool logs
-      tags:
-      - Host tool
-  /host/tool/operate:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/request.HostToolReq'
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Operate tool
-      tags:
-      - Host tool
-      x-panel-log:
-        BeforeFunctions: []
-        bodyKeys:
-        - operate
-        - type
-        formatEN: '[operate] [type]'
-        formatZH: '[operate] [type] '
-        paramKeys: []
-  /host/tool/supervisor/process:
-    get:
-      consumes:
-      - application/json
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Get Supervisor process config
-      tags:
-      - Host tool
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/request.SupervisorProcessConfig'
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Create Supervisor process
-      tags:
-      - Host tool
-      x-panel-log:
-        BeforeFunctions: []
-        bodyKeys:
-        - operate
-        formatEN: '[operate] process'
-        formatZH: '[operate] 守护进程 '
-        paramKeys: []
-  /host/tool/supervisor/process/file:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/request.SupervisorProcessFileReq'
-      responses:
-        "200":
-          description: OK
-      security:
-      - ApiKeyAuth: []
-      summary: Get Supervisor process config
-      tags:
-      - Host tool
-      x-panel-log:
-        BeforeFunctions: []
-        bodyKeys:
-        - operate
-        formatEN: '[operate] Supervisor Process Config file'
-        formatZH: '[operate] Supervisor 进程文件 '
         paramKeys: []
   /hosts:
     post:
@@ -10239,8 +11253,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/dto.HostInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create host
       tags:
       - Host
@@ -10261,6 +11278,7 @@ paths:
             $ref: '#/definitions/dto.CommandInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List commands
       tags:
       - Command
@@ -10279,6 +11297,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create command
       tags:
       - Command
@@ -10306,6 +11325,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete command
       tags:
       - Command
@@ -10328,9 +11348,12 @@ paths:
         "200":
           description: OK
           schema:
-            type: Array
+            items:
+              $ref: '#/definitions/dto.RedisCommand'
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List redis commands
       tags:
       - Redis Command
@@ -10349,6 +11372,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Save redis command
       tags:
       - Redis Command
@@ -10376,6 +11400,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete redis command
       tags:
       - Redis Command
@@ -10410,6 +11435,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page redis commands
       tags:
       - Redis Command
@@ -10431,6 +11457,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page commands
       tags:
       - Command
@@ -10442,9 +11469,12 @@ paths:
         "200":
           description: OK
           schema:
-            type: Array
+            items:
+              $ref: '#/definitions/dto.CommandTree'
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Tree commands
       tags:
       - Command
@@ -10464,6 +11494,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update command
       tags:
       - Command
@@ -10473,6 +11504,32 @@ paths:
         - name
         formatEN: update quick command [name]
         formatZH: 更新快捷命令 [name]
+        paramKeys: []
+  /hosts/conffile/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SSHConf'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Update host SSH setting by file
+      tags:
+      - SSH
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys: []
+        formatEN: update SSH conf
+        formatZH: 修改 SSH 配置文件
         paramKeys: []
   /hosts/del:
     post:
@@ -10490,6 +11547,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete host
       tags:
       - Host
@@ -10515,6 +11573,7 @@ paths:
             $ref: '#/definitions/dto.FirewallBaseInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load firewall base info
       tags:
       - Firewall
@@ -10534,6 +11593,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Batch create group
       tags:
       - Firewall
@@ -10553,6 +11613,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update firewall port group
       tags:
       - Firewall
@@ -10579,6 +11640,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create firewall group
       tags:
       - Firewall
@@ -10604,10 +11666,9 @@ paths:
       responses:
         "200":
           description: OK
-          schema:
-            $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page firewall status
       tags:
       - Firewall
@@ -10634,6 +11695,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create firewall port group
       tags:
       - Firewall
@@ -10663,6 +11725,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page firewall rules
       tags:
       - Firewall
@@ -10682,7 +11745,8 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
-      summary: Uodate address group
+      - Timestamp: []
+      summary: Update address group
       tags:
       - Firewall
   /hosts/firewall/update/description:
@@ -10701,6 +11765,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update rule description
       tags:
       - Firewall
@@ -10720,6 +11785,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update firewall group
       tags:
       - Firewall
@@ -10730,6 +11796,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Clean monitor datas
       tags:
       - Monitor
@@ -10751,8 +11818,13 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.MonitorData'
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load monitor datas
       tags:
       - Monitor
@@ -10771,15 +11843,165 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/dto.HostTree'
-            type: array
+            $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page host
       tags:
       - Host
-  /hosts/test/byid/:id:
+  /hosts/ssh/conf:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Load host SSH conf
+      tags:
+      - SSH
+  /hosts/ssh/generate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GenerateSSH'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Generate host SSH secret
+      tags:
+      - SSH
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys: []
+        formatEN: generate SSH secret
+        formatZH: '生成 SSH 密钥 '
+        paramKeys: []
+  /hosts/ssh/log:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SearchSSHLog'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SSHLog'
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Load host SSH logs
+      tags:
+      - SSH
+  /hosts/ssh/operate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Operate'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Operate SSH
+      tags:
+      - SSH
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys:
+        - operation
+        formatEN: '[operation] SSH'
+        formatZH: '[operation] SSH '
+        paramKeys: []
+  /hosts/ssh/search:
+    post:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SSHInfo'
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Load host SSH setting info
+      tags:
+      - SSH
+  /hosts/ssh/secret:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GenerateLoad'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Load host SSH secret
+      tags:
+      - SSH
+  /hosts/ssh/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SSHUpdate'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Update host SSH setting
+      tags:
+      - SSH
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys:
+        - key
+        - value
+        formatEN: update SSH setting [key] => [value]
+        formatZH: 修改 SSH 配置 [key] => [value]
+        paramKeys: []
+  /hosts/test/byid/{id}:
     post:
       consumes:
       - application/json
@@ -10796,6 +12018,7 @@ paths:
             type: boolean
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Test host conn by host id
       tags:
       - Host
@@ -10813,11 +12036,212 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: boolean
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Test host conn by info
       tags:
       - Host
+  /hosts/tool:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.HostToolReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.HostToolRes'
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Get tool status
+      tags:
+      - Host tool
+  /hosts/tool/config:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.HostToolConfig'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.HostToolConfig'
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Get tool config
+      tags:
+      - Host tool
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys:
+        - operate
+        formatEN: '[operate] tool config'
+        formatZH: '[operate] 主机工具配置文件 '
+        paramKeys: []
+  /hosts/tool/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.HostToolCreate'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Create Host tool Config
+      tags:
+      - Host tool
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys:
+        - type
+        formatEN: create [type] config
+        formatZH: 创建 [type] 配置
+        paramKeys: []
+  /hosts/tool/log:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.HostToolLogReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Get tool logs
+      tags:
+      - Host tool
+  /hosts/tool/operate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.HostToolReq'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Operate tool
+      tags:
+      - Host tool
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys:
+        - operate
+        - type
+        formatEN: '[operate] [type]'
+        formatZH: '[operate] [type] '
+        paramKeys: []
+  /hosts/tool/supervisor/process:
+    get:
+      consumes:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SupervisorProcessConfig'
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Get Supervisor process config
+      tags:
+      - Host tool
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.SupervisorProcessConfig'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Create Supervisor process
+      tags:
+      - Host tool
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys:
+        - operate
+        formatEN: '[operate] process'
+        formatZH: '[operate] 守护进程 '
+        paramKeys: []
+  /hosts/tool/supervisor/process/file:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.SupervisorProcessFileReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Get Supervisor process config
+      tags:
+      - Host tool
+      x-panel-log:
+        BeforeFunctions: []
+        bodyKeys:
+        - operate
+        formatEN: '[operate] Supervisor Process Config file'
+        formatZH: '[operate] Supervisor 进程文件 '
+        paramKeys: []
   /hosts/tree:
     post:
       consumes:
@@ -10838,6 +12262,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load host tree
       tags:
       - Host
@@ -10857,6 +12282,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update host
       tags:
       - Host
@@ -10884,6 +12310,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update host group
       tags:
       - Host
@@ -10915,10 +12342,9 @@ paths:
       responses:
         "200":
           description: OK
-          schema:
-            $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Clean operation logs
       tags:
       - Logs
@@ -10947,6 +12373,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page login logs
       tags:
       - Logs
@@ -10968,6 +12395,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page operation logs
       tags:
       - Logs
@@ -10976,8 +12404,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load system logs
       tags:
       - Logs
@@ -10986,8 +12417,13 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              type: string
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load system log files
       tags:
       - Logs
@@ -10997,9 +12433,10 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.FileInfo'
+            $ref: '#/definitions/response.NginxFile'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load OpenResty conf
       tags:
       - OpenResty
@@ -11010,6 +12447,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Clear OpenResty proxy cache
       tags:
       - OpenResty
@@ -11035,6 +12473,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update OpenResty conf by upload file
       tags:
       - OpenResty
@@ -11064,6 +12503,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load partial OpenResty conf
       tags:
       - OpenResty
@@ -11076,6 +12516,7 @@ paths:
             $ref: '#/definitions/response.NginxStatus'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load OpenResty status info
       tags:
       - OpenResty
@@ -11095,6 +12536,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update OpenResty conf
       tags:
       - OpenResty
@@ -11125,6 +12567,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Stop Process
       tags:
       - Process
@@ -11149,8 +12592,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/model.Runtime'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create runtime
       tags:
       - Runtime
@@ -11161,7 +12607,7 @@ paths:
         formatEN: Create runtime [name]
         formatZH: 创建运行环境 [name]
         paramKeys: []
-  /runtimes/:id:
+  /runtimes/{id}:
     get:
       consumes:
       - application/json
@@ -11174,8 +12620,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.RuntimeDTO'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get runtime
       tags:
       - Runtime
@@ -11195,6 +12644,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete runtime
       tags:
       - Website
@@ -11219,8 +12669,13 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.NodeModule'
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get Node modules
       tags:
       - Runtime
@@ -11240,6 +12695,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate Node modules
       tags:
       - Runtime
@@ -11257,8 +12713,13 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.PackageScripts'
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get Node package scripts
       tags:
       - Runtime
@@ -11278,6 +12739,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate runtime
       tags:
       - Runtime
@@ -11304,6 +12766,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create Extensions
       tags:
       - PHP Extensions
@@ -11323,6 +12786,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete Extensions
       tags:
       - PHP Extensions
@@ -11341,11 +12805,10 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/response.PHPExtensionsDTO'
-            type: array
+            $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page Extensions
       tags:
       - PHP Extensions
@@ -11365,6 +12828,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update Extensions
       tags:
       - PHP Extensions
@@ -11382,8 +12846,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List runtimes
       tags:
       - Runtime
@@ -11396,6 +12863,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Sync runtime status
       tags:
       - Runtime
@@ -11415,6 +12883,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update runtime
       tags:
       - Runtime
@@ -11432,8 +12901,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Generate api key
       tags:
       - System Setting
@@ -11459,6 +12931,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update api config
       tags:
       - System Setting
@@ -11485,6 +12958,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create backup account
       tags:
       - Backup Account
@@ -11511,6 +12985,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Backup system data
       tags:
       - Backup Account
@@ -11539,6 +13014,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete backup account
       tags:
       - Backup Account
@@ -11566,6 +13042,7 @@ paths:
             $ref: '#/definitions/dto.OneDriveInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load OneDrive info
       tags:
       - Backup Account
@@ -11585,6 +13062,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete backup record
       tags:
       - Backup Account
@@ -11615,8 +13093,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Download backup record
       tags:
       - Backup Account
@@ -11642,8 +13123,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page backup records
       tags:
       - Backup Account
@@ -11661,9 +13145,60 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page backup records by cronjob
+      tags:
+      - Backup Account
+  /settings/backup/record/size:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RecordSearch'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.BackupFile'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Load backup records size
+      tags:
+      - Backup Account
+  /settings/backup/record/size/bycronjob:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RecordSearchByCronjob'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.BackupFile'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Load backup records size for cronjob
       tags:
       - Backup Account
   /settings/backup/recover:
@@ -11682,6 +13217,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Recover system data
       tags:
       - Backup Account
@@ -11711,6 +13247,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Recover system data by upload
       tags:
       - Backup Account
@@ -11731,6 +13268,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Refresh OneDrive token
       tags:
       - Backup Account
@@ -11745,6 +13283,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List backup accounts
       tags:
       - Backup Account
@@ -11763,10 +13302,11 @@ paths:
           description: OK
           schema:
             items:
-              type: string
+              type: object
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List buckets
       tags:
       - Backup Account
@@ -11790,6 +13330,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List files from backup accounts
       tags:
       - Backup Account
@@ -11809,6 +13350,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update backup account
       tags:
       - Backup Account
@@ -11828,6 +13370,7 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load local base dir
       tags:
       - System Setting
@@ -11847,6 +13390,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update system bind info
       tags:
       - System Setting
@@ -11874,6 +13418,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Reset system password expired
       tags:
       - System Setting
@@ -11890,8 +13435,13 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              type: string
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load system address
       tags:
       - System Setting
@@ -11911,6 +13461,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update system setting
       tags:
       - System Setting
@@ -11938,6 +13489,7 @@ paths:
             $ref: '#/definitions/mfa.Otp'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load mfa info
       tags:
       - System Setting
@@ -11957,6 +13509,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Bind mfa
       tags:
       - System Setting
@@ -11982,6 +13535,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update system password
       tags:
       - System Setting
@@ -12007,6 +13561,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update system port
       tags:
       - System Setting
@@ -12033,6 +13588,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update proxy setting
       tags:
       - System Setting
@@ -12053,6 +13609,7 @@ paths:
             $ref: '#/definitions/dto.SettingInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load system setting info
       tags:
       - System Setting
@@ -12063,6 +13620,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load system available status
       tags:
       - System Setting
@@ -12082,6 +13640,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create system snapshot
       tags:
       - System Setting
@@ -12109,6 +13668,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete system backup
       tags:
       - System Setting
@@ -12141,6 +13701,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update snapshot description
       tags:
       - System Setting
@@ -12174,6 +13735,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Import system snapshot
       tags:
       - System Setting
@@ -12201,6 +13763,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Recover system backup
       tags:
       - System Setting
@@ -12233,6 +13796,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Rollback system backup
       tags:
       - System Setting
@@ -12267,6 +13831,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page system snapshot
       tags:
       - System Setting
@@ -12284,8 +13849,13 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.SnapshotFile'
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load system snapshot size
       tags:
       - System Setting
@@ -12303,8 +13873,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/dto.SnapshotStatus'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load Snapshot status
       tags:
       - System Setting
@@ -12315,6 +13888,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Download system cert
       tags:
       - System Setting
@@ -12324,9 +13898,10 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.SettingInfo'
+            $ref: '#/definitions/dto.SSLInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load system cert info
       tags:
       - System Setting
@@ -12346,6 +13921,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update system ssl
       tags:
       - System Setting
@@ -12372,6 +13948,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update system setting
       tags:
       - System Setting
@@ -12397,8 +13974,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load release notes by version
       tags:
       - System Setting
@@ -12417,6 +13997,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Upgrade
       tags:
       - System Setting
@@ -12443,6 +14024,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create clam
       tags:
       - Clam
@@ -12465,6 +14047,7 @@ paths:
             $ref: '#/definitions/dto.ClamBaseInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load clam base info
       tags:
       - Clam
@@ -12484,6 +14067,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete clam
       tags:
       - Clam
@@ -12515,9 +14099,10 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.PageResult'
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load clam file
       tags:
       - Clam
@@ -12537,6 +14122,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update clam file
       tags:
       - Clam
@@ -12556,6 +14142,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Handle clam scan
       tags:
       - Clam
@@ -12583,9 +14170,12 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.Operate'
-      responses: {}
+      responses:
+        "200":
+          description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate Clam
       tags:
       - Clam
@@ -12607,9 +14197,12 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.OperateByID'
-      responses: {}
+      responses:
+        "200":
+          description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Clean clam record
       tags:
       - Clam
@@ -12640,8 +14233,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load clam record detail
       tags:
       - Clam
@@ -12663,6 +14259,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page clam record
       tags:
       - Clam
@@ -12684,6 +14281,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page clam
       tags:
       - Clam
@@ -12703,6 +14301,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update clam status
       tags:
       - Clam
@@ -12736,6 +14335,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update clam
       tags:
       - Clam
@@ -12765,6 +14365,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Clean system
       tags:
       - Device
@@ -12783,6 +14384,7 @@ paths:
             $ref: '#/definitions/dto.DeviceBaseInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load device base info
       tags:
       - Device
@@ -12800,8 +14402,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: boolean
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Check device DNS conf
       tags:
       - Device
@@ -12819,8 +14424,13 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              type: string
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: load conf
       tags:
       - Device
@@ -12840,6 +14450,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update device conf by file
       tags:
       - Device
@@ -12859,6 +14470,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update device
       tags:
       - Device
@@ -12877,6 +14489,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update device hosts
       tags:
       - Device
@@ -12904,6 +14517,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update device passwd
       tags:
       - Device
@@ -12923,6 +14537,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update device swap
       tags:
       - Device
@@ -12942,9 +14557,12 @@ paths:
         "200":
           description: OK
           schema:
-            type: Array
+            items:
+              type: string
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: list time zone options
       tags:
       - Device
@@ -12957,6 +14575,7 @@ paths:
             $ref: '#/definitions/dto.Fail2BanBaseInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load fail2ban base info
       tags:
       - Fail2ban
@@ -12967,8 +14586,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            type: string
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load fail2ban conf
       tags:
       - Fail2ban
@@ -12983,9 +14605,12 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.Operate'
-      responses: {}
+      responses:
+        "200":
+          description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate fail2ban
       tags:
       - Fail2ban
@@ -13007,9 +14632,12 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.Operate'
-      responses: {}
+      responses:
+        "200":
+          description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate sshd of fail2ban
       tags:
       - Fail2ban
@@ -13028,9 +14656,12 @@ paths:
         "200":
           description: OK
           schema:
-            type: Array
+            items:
+              type: string
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page fail2ban ip list
       tags:
       - Fail2ban
@@ -13050,6 +14681,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update fail2ban conf
       tags:
       - Fail2ban
@@ -13077,6 +14709,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update fail2ban conf by file
       tags:
       - Fail2ban
@@ -13096,6 +14729,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create FTP user
       tags:
       - FTP
@@ -13116,6 +14750,7 @@ paths:
             $ref: '#/definitions/dto.FtpBaseInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load FTP base info
       tags:
       - FTP
@@ -13135,6 +14770,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete FTP user
       tags:
       - FTP
@@ -13169,6 +14805,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load FTP operation log
       tags:
       - FTP
@@ -13183,9 +14820,12 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.Operate'
-      responses: {}
+      responses:
+        "200":
+          description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate FTP
       tags:
       - FTP
@@ -13214,6 +14854,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page FTP user
       tags:
       - FTP
@@ -13233,6 +14874,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Sync FTP user
       tags:
       - FTP
@@ -13258,6 +14900,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update FTP user
       tags:
       - FTP
@@ -13274,8 +14917,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/dto.CleanData'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Scan system
       tags:
       - Device
@@ -13301,6 +14947,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create website
       tags:
       - Website
@@ -13311,7 +14958,7 @@ paths:
         formatEN: Create website [primaryDomain]
         formatZH: 创建网站 [primaryDomain]
         paramKeys: []
-  /websites/:id:
+  /websites/{id}:
     get:
       consumes:
       - application/json
@@ -13328,10 +14975,11 @@ paths:
             $ref: '#/definitions/response.WebsiteDTO'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search website by id
       tags:
       - Website
-  /websites/:id/config/:type:
+  /websites/{id}/config/{type}:
     get:
       consumes:
       - application/json
@@ -13341,6 +14989,11 @@ paths:
         name: id
         required: true
         type: integer
+      - description: type
+        in: path
+        name: type
+        required: true
+        type: string
       responses:
         "200":
           description: OK
@@ -13348,10 +15001,11 @@ paths:
             $ref: '#/definitions/response.FileInfo'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search website nginx by id
       tags:
       - Website Nginx
-  /websites/:id/https:
+  /websites/{id}/https:
     get:
       consumes:
       - application/json
@@ -13368,6 +15022,7 @@ paths:
             $ref: '#/definitions/response.WebsiteHTTPS'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load https conf
       tags:
       - Website HTTPS
@@ -13375,6 +15030,11 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: request
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: request
         in: body
         name: request
@@ -13388,6 +15048,7 @@ paths:
             $ref: '#/definitions/response.WebsiteHTTPS'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update https conf
       tags:
       - Website HTTPS
@@ -13422,6 +15083,7 @@ paths:
             $ref: '#/definitions/response.WebsiteAcmeAccountDTO'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create website acme account
       tags:
       - Website Acme
@@ -13448,6 +15110,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete website acme account
       tags:
       - Website Acme
@@ -13482,6 +15145,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page website acme accounts
       tags:
       - Website Acme
@@ -13499,8 +15163,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.NginxAuthRes'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get AuthBasic conf
       tags:
       - Website
@@ -13520,6 +15187,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get AuthBasic conf
       tags:
       - Website
@@ -13541,6 +15209,7 @@ paths:
             $ref: '#/definitions/request.WebsiteCACreate'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create website ca
       tags:
       - Website CA
@@ -13568,6 +15237,7 @@ paths:
             $ref: '#/definitions/response.WebsiteCADTO'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get website ca
       tags:
       - Website CA
@@ -13587,6 +15257,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete website ca
       tags:
       - Website CA
@@ -13619,6 +15290,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Download CA file
       tags:
       - Website CA
@@ -13651,6 +15323,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Obtain SSL
       tags:
       - Website CA
@@ -13683,6 +15356,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Renew Obtain SSL
       tags:
       - Website CA
@@ -13717,6 +15391,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page website ca
       tags:
       - Website CA
@@ -13740,6 +15415,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Check before create website
       tags:
       - Website
@@ -13761,6 +15437,7 @@ paths:
             $ref: '#/definitions/response.WebsiteNginxConfig'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load nginx conf
       tags:
       - Website Nginx
@@ -13780,6 +15457,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update nginx conf
       tags:
       - Website Nginx
@@ -13796,17 +15474,24 @@ paths:
         formatEN: Nginx conf update [domain]
         formatZH: nginx 配置修改 [domain]
         paramKeys: []
-  /websites/default/html/:type:
+  /websites/default/html/{type}:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: type
+        in: path
+        name: type
+        required: true
+        type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.FileInfo'
+            $ref: '#/definitions/response.WebsiteHtmlRes'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get default html
       tags:
       - Website
@@ -13826,6 +15511,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update default html
       tags:
       - Website
@@ -13852,6 +15538,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Change default server
       tags:
       - Website
@@ -13885,6 +15572,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete website
       tags:
       - Website
@@ -13915,8 +15603,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.WebsiteDirConfig'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get website dir
       tags:
       - Website
@@ -13936,6 +15627,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update Site Dir permission
       tags:
       - Website
@@ -13968,6 +15660,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update Site Dir
       tags:
       - Website
@@ -14000,6 +15693,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create website dns account
       tags:
       - Website DNS
@@ -14026,6 +15720,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete website dns account
       tags:
       - Website DNS
@@ -14060,6 +15755,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page website dns accounts
       tags:
       - Website DNS
@@ -14079,6 +15775,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update website dns account
       tags:
       - Website DNS
@@ -14104,9 +15801,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.WebsiteDomain'
+            items:
+              $ref: '#/definitions/model.WebsiteDomain'
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create website domain
       tags:
       - Website Domain
@@ -14117,7 +15817,7 @@ paths:
         formatEN: Create domain [domain]
         formatZH: 创建域名 [domain]
         paramKeys: []
-  /websites/domains/:websiteId:
+  /websites/domains/{websiteId}:
     get:
       consumes:
       - application/json
@@ -14136,6 +15836,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search website domains by websiteId
       tags:
       - Website Domain
@@ -14155,6 +15856,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete website domain
       tags:
       - Website Domain
@@ -14185,8 +15887,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.NginxAntiLeechRes'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get AntiLeech conf
       tags:
       - Website
@@ -14206,6 +15911,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update AntiLeech conf
       tags:
       - Website
@@ -14220,6 +15926,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List websites
       tags:
       - Website
@@ -14241,6 +15948,7 @@ paths:
             $ref: '#/definitions/response.WebsiteLog'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate website log
       tags:
       - Website
@@ -14274,6 +15982,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update website nginx conf
       tags:
       - Website Nginx
@@ -14306,6 +16015,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Operate website
       tags:
       - Website
@@ -14330,10 +16040,11 @@ paths:
           description: OK
           schema:
             items:
-              type: string
+              $ref: '#/definitions/response.WebsiteOption'
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: List website names
       tags:
       - Website
@@ -14353,6 +16064,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update website php conf
       tags:
       - Website PHP
@@ -14369,7 +16081,7 @@ paths:
         formatEN: '[domain] PHP conf update'
         formatZH: '[domain] PHP 配置修改'
         paramKeys: []
-  /websites/php/config/:id:
+  /websites/php/config/{id}:
     get:
       consumes:
       - application/json
@@ -14386,6 +16098,7 @@ paths:
             $ref: '#/definitions/response.PHPConfig'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Load website php conf
       tags:
       - Website
@@ -14405,6 +16118,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update php conf
       tags:
       - Website PHP
@@ -14437,6 +16151,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update php version
       tags:
       - Website PHP
@@ -14467,11 +16182,49 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/request.WebsiteProxyConfig'
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get proxy conf
       tags:
       - Website
+  /websites/proxies/del:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.WebsiteProxyDel'
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      - Timestamp: []
+      summary: Delete proxy conf
+      tags:
+      - Website
+      x-panel-log:
+        BeforeFunctions:
+        - db: websites
+          input_column: id
+          input_value: id
+          isList: false
+          output_column: primary_domain
+          output_value: domain
+        bodyKeys:
+        - id
+        formatEN: Delete domain [domain] proxy config
+        formatZH: 删除网站 [domain] 反向代理配置
+        paramKeys: []
   /websites/proxies/update:
     post:
       consumes:
@@ -14488,6 +16241,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update proxy conf
       tags:
       - Website
@@ -14520,6 +16274,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update proxy file
       tags:
       - Website
@@ -14550,8 +16305,13 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.NginxRedirectConfig'
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get redirect conf
       tags:
       - Website
@@ -14571,6 +16331,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update redirect file
       tags:
       - Website
@@ -14603,6 +16364,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update redirect conf
       tags:
       - Website
@@ -14633,8 +16395,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.NginxRewriteRes'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Get rewrite conf
       tags:
       - Website
@@ -14654,6 +16419,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update rewrite conf
       tags:
       - Website
@@ -14688,6 +16454,7 @@ paths:
             $ref: '#/definitions/dto.PageResult'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page websites
       tags:
       - Website
@@ -14709,6 +16476,7 @@ paths:
             $ref: '#/definitions/request.WebsiteSSLCreate'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Create website ssl
       tags:
       - Website SSL
@@ -14719,7 +16487,7 @@ paths:
         formatEN: Create website ssl [primaryDomain]
         formatZH: 创建网站 ssl [primaryDomain]
         paramKeys: []
-  /websites/ssl/:id:
+  /websites/ssl/{id}:
     get:
       consumes:
       - application/json
@@ -14732,8 +16500,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.WebsiteSSLDTO'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search website ssl by id
       tags:
       - Website SSL
@@ -14753,6 +16524,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Delete website ssl
       tags:
       - Website SSL
@@ -14785,6 +16557,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Download SSL file
       tags:
       - Website SSL
@@ -14817,6 +16590,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Apply  ssl
       tags:
       - Website SSL
@@ -14853,6 +16627,7 @@ paths:
             type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Resolve website ssl
       tags:
       - Website SSL
@@ -14870,8 +16645,13 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.WebsiteSSLDTO'
+            type: array
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Page website ssl
       tags:
       - Website SSL
@@ -14891,6 +16671,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update Website ssl
       tags:
       - Website SSL
@@ -14923,6 +16704,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Upload Website ssl
       tags:
       - Website SSL
@@ -14933,7 +16715,7 @@ paths:
         formatEN: Upload ssl [type]
         formatZH: 上传 ssl [type]
         paramKeys: []
-  /websites/ssl/website/:websiteId:
+  /websites/ssl/website/{websiteId}:
     get:
       consumes:
       - application/json
@@ -14946,8 +16728,11 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.WebsiteSSLDTO'
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Search website ssl by website id
       tags:
       - Website SSL
@@ -14967,6 +16752,7 @@ paths:
           description: OK
       security:
       - ApiKeyAuth: []
+      - Timestamp: []
       summary: Update website
       tags:
       - Website
@@ -14981,17 +16767,9 @@ schemes:
 - http
 - https
 securityDefinitions:
-  CustomToken:
-    description: |-
-      Custom Token Format, Format: md5('1panel' + 1Panel-Token + 1Panel-Timestamp).
-      ```
-      eg:
-      curl -X GET "http://localhost:4004/api/v1/resource" \
-      -H "1Panel-Token: <1panel_token>" \
-      -H "1Panel-Timestamp: <current_unix_timestamp>"
-      ```
-      - `1Panel-Token` is the key for the panel API interface.
-    in: Header
+  ApiKeyAuth:
+    description: '- `1Panel-Token` is the key for the panel API Key.'
+    in: header
     name: 1Panel-Token
     type: apiKey
   Timestamp:

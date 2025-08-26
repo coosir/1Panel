@@ -22,7 +22,7 @@
             <template #toolbar v-if="clamStatus.isExist">
                 <div class="flex w-full flex-col gap-4 md:justify-between md:flex-row">
                     <div class="flex flex-wrap gap-4">
-                        <el-button type="primary" :disabled="!clamStatus.isRunning" @click="onOpenDialog('add')">
+                        <el-button type="primary" :disabled="!clamStatus.isRunning" @click="onOpenDialog('create')">
                             {{ $t('toolbox.clam.clamCreate') }}
                         </el-button>
                         <el-button
@@ -54,7 +54,7 @@
                     <el-table-column type="selection" fix />
                     <el-table-column
                         :label="$t('commons.table.name')"
-                        :min-width="60"
+                        :min-width="90"
                         prop="name"
                         sortable
                         show-overflow-tooltip
@@ -78,7 +78,7 @@
                     <el-table-column
                         v-if="isProductPro"
                         :label="$t('commons.table.status')"
-                        :min-width="70"
+                        :min-width="110"
                         prop="status"
                         sortable
                     >
@@ -146,7 +146,7 @@
                         </template>
                     </el-table-column>
                     <fu-table-operations
-                        width="200px"
+                        width="300px"
                         :buttons="buttons"
                         :ellipsis="10"
                         :label="$t('commons.table.operate')"
@@ -195,7 +195,7 @@ const loading = ref();
 const selects = ref<any>([]);
 
 const globalStore = GlobalStore();
-const { isProductPro } = storeToRefs(globalStore);
+const { isProductPro, docsUrl } = storeToRefs(globalStore);
 const data = ref();
 const paginationConfig = reactive({
     cacheSizeKey: 'clam-page-size',
@@ -257,7 +257,7 @@ const toFolder = (folder: string) => {
     router.push({ path: '/hosts/files', query: { path: folder } });
 };
 const toDoc = async () => {
-    window.open('https://1panel.cn/docs/user_manual/toolbox/clam/', '_blank', 'noopener,noreferrer');
+    window.open(docsUrl.value + '/user_manual/toolbox/clam/', '_blank', 'noopener,noreferrer');
 };
 
 const onChange = async (row: any) => {
@@ -366,7 +366,7 @@ const buttons = [
         },
     },
     {
-        label: i18n.global.t('cronjob.record'),
+        label: i18n.global.t('cronjob.viewRecords'),
         click: (row: Toolbox.ClamInfo) => {
             onOpenRecord(row);
         },

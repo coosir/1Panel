@@ -3,17 +3,17 @@
         <RouterButton
             :buttons="[
                 {
-                    label: i18n.global.t('cronjob.cronTask'),
+                    label: i18n.global.t('cronjob.cronTask', 2),
                     path: '/cronjobs',
                 },
             ]"
         />
-        <LayoutContent v-loading="loading" v-if="!isRecordShow" :title="$t('cronjob.cronTask')">
+        <LayoutContent v-loading="loading" v-if="!isRecordShow" :title="$t('cronjob.cronTask', 2)">
             <template #toolbar>
                 <div class="flex justify-between gap-2 flex-wrap sm:flex-row">
                     <div class="flex flex-wrap gap-3">
                         <el-button type="primary" @click="onOpenDialog('create')">
-                            {{ $t('commons.button.create') }}{{ $t('cronjob.cronTask') }}
+                            {{ $t('cronjob.create') }}
                         </el-button>
                         <el-button-group class="ml-4">
                             <el-button plain :disabled="selects.length === 0" @click="onBatchChangeStatus('enable')">
@@ -55,7 +55,7 @@
                             </el-text>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="$t('commons.table.status')" :min-width="80" prop="status" sortable>
+                    <el-table-column :label="$t('commons.table.status')" :min-width="110" prop="status" sortable>
                         <template #default="{ row }">
                             <el-button
                                 v-if="row.status === 'Enable'"
@@ -64,7 +64,7 @@
                                 icon="VideoPlay"
                                 type="success"
                             >
-                                {{ $t('commons.button.enable') }}
+                                {{ $t('commons.status.enabled') }}
                             </el-button>
                             <el-button
                                 v-else
@@ -73,7 +73,7 @@
                                 type="danger"
                                 @click="onChangeStatus(row.id, 'enable')"
                             >
-                                {{ $t('commons.button.disable') }}
+                                {{ $t('commons.status.disabled') }}
                             </el-button>
                         </template>
                     </el-table-column>
@@ -98,7 +98,7 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="$t('cronjob.retainCopies')" :min-width="90" prop="retainCopies">
+                    <el-table-column :label="$t('cronjob.retainCopies')" :min-width="120" prop="retainCopies">
                         <template #default="{ row }">
                             <el-button v-if="hasBackup(row.type)" @click="loadBackups(row)" plain size="small">
                                 {{ row.retainCopies }}{{ $t('cronjob.retainCopiesUnit') }}
@@ -111,7 +111,7 @@
                             {{ row.lastRecordTime }}
                         </template>
                     </el-table-column>
-                    <el-table-column :min-width="80" :label="$t('setting.backupAccount')" prop="defaultDownload">
+                    <el-table-column :min-width="120" :label="$t('setting.backupAccount')" prop="defaultDownload">
                         <template #default="{ row }">
                             <span v-if="!hasBackup(row.type)">-</span>
                             <div v-else>
@@ -150,6 +150,8 @@
                         :buttons="buttons"
                         :ellipsis="10"
                         :label="$t('commons.table.operate')"
+                        :min-width="mobile ? 'auto' : 200"
+                        :fixed="mobile ? false : 'right'"
                         fix
                     />
                 </ComplexTable>
@@ -161,6 +163,11 @@
                 <el-form class="mt-4 mb-1" v-if="showClean" ref="deleteForm" label-position="left">
                     <el-form-item>
                         <el-checkbox v-model="cleanData" :label="$t('cronjob.cleanData')" />
+                        <el-checkbox
+                            v-if="cleanData"
+                            v-model="cleanRemoteData"
+                            :label="$t('cronjob.cleanRemoteData')"
+                        />
                         <span class="input-help">
                             {{ $t('cronjob.cleanDataHelper') }}
                         </span>
@@ -178,13 +185,14 @@
 import OperateDialog from '@/views/cronjob/operate/index.vue';
 import Records from '@/views/cronjob/record/index.vue';
 import Backups from '@/views/cronjob/backup/index.vue';
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { deleteCronjob, getCronjobPage, handleOnce, updateStatus } from '@/api/modules/cronjob';
 import i18n from '@/lang';
 import { Cronjob } from '@/api/interface/cronjob';
 import { ElMessageBox } from 'element-plus';
 import { MsgSuccess } from '@/utils/message';
 import { transSpecToStr } from './helper';
+import { GlobalStore } from '@/store';
 
 const loading = ref();
 const selects = ref<any>([]);
@@ -194,6 +202,7 @@ const operateIDs = ref();
 const opRef = ref();
 const showClean = ref();
 const cleanData = ref();
+const cleanRemoteData = ref(true);
 
 const data = ref();
 const paginationConfig = reactive({
@@ -205,6 +214,12 @@ const paginationConfig = reactive({
     order: 'null',
 });
 const searchName = ref();
+
+const globalStore = GlobalStore();
+
+const mobile = computed(() => {
+    return globalStore.isMobile();
+});
 
 const search = async (column?: any) => {
     paginationConfig.orderBy = column?.order ? column.prop : paginationConfig.orderBy;
@@ -273,6 +288,7 @@ const onDelete = async (row: Cronjob.CronjobInfo | null) => {
     let ids = [];
     showClean.value = false;
     cleanData.value = false;
+    cleanRemoteData.value = true;
     if (row) {
         ids = [row.id];
         names = [row.name];
@@ -303,7 +319,7 @@ const onDelete = async (row: Cronjob.CronjobInfo | null) => {
 
 const onSubmitDelete = async () => {
     loading.value = true;
-    await deleteCronjob({ ids: operateIDs.value, cleanData: cleanData.value })
+    await deleteCronjob({ ids: operateIDs.value, cleanData: cleanData.value, cleanRemoteData: cleanRemoteData.value })
         .then(() => {
             loading.value = false;
             MsgSuccess(i18n.global.t('commons.msg.deleteSuccess'));
@@ -390,7 +406,7 @@ const buttons = [
         },
     },
     {
-        label: i18n.global.t('cronjob.record'),
+        label: i18n.global.t('cronjob.viewRecords'),
         click: (row: Cronjob.CronjobInfo) => {
             loadDetail(row);
         },

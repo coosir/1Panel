@@ -67,14 +67,20 @@
 
                     <el-divider border-style="dashed" />
                     <el-form-item :label="$t('commons.login.password')" v-if="form.from === 'local'" prop="password">
-                        <el-input type="password" show-password clearable v-model="form.password">
-                            <template #append>
-                                <CopyButton :content="form.password" />
-                                <el-button @click="random" class="p-ml-5">
-                                    {{ $t('commons.button.random') }}
-                                </el-button>
-                            </template>
-                        </el-input>
+                        <el-input
+                            style="width: calc(100% - 205px)"
+                            type="password"
+                            show-password
+                            clearable
+                            v-model="form.password"
+                        />
+                        <el-button-group>
+                            <CopyButton class="copy_button" :content="form.password" />
+                            <el-button @click="random">
+                                {{ $t('commons.button.random') }}
+                            </el-button>
+                        </el-button-group>
+                        <span class="input-help">{{ $t('commons.rule.illegalChar') }}</span>
                     </el-form-item>
 
                     <div v-if="form.from !== 'local'">
@@ -113,6 +119,7 @@ import { MsgSuccess } from '@/utils/message';
 import DrawerHeader from '@/components/drawer-header/index.vue';
 import { getRandomStr } from '@/utils/util';
 import { getSettingInfo } from '@/api/modules/setting';
+import { Rules } from '@/global/form-rules';
 
 const loading = ref(false);
 
@@ -130,20 +137,8 @@ const form = reactive({
     remoteIP: '',
 });
 const rules = reactive({
-    password: [{ validator: checkPassword, trigger: 'blur' }],
+    password: [Rules.requiredInput, Rules.noSpace, Rules.illegal],
 });
-
-function checkPassword(rule: any, value: any, callback: any) {
-    if (form.password !== '') {
-        const reg = /^[a-zA-Z0-9]{1}[a-zA-Z0-9.%@!~_-]{4,126}[a-zA-Z0-9]{1}$/;
-        if (!reg.test(value) && value !== '') {
-            callback(new Error(i18n.global.t('commons.rule.paramComplexity', ['.%@!~_-'])));
-        } else {
-            callback();
-        }
-    }
-    callback();
-}
 
 const confirmDialogRef = ref();
 
@@ -234,3 +229,14 @@ defineExpose({
     acceptParams,
 });
 </script>
+
+<style lang="scss" scoped>
+.copy_button {
+    border-radius: 0px;
+    border-left-width: 0px;
+}
+:deep(.el-input__wrapper) {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+</style>

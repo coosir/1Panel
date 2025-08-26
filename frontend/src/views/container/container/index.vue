@@ -5,9 +5,9 @@
             <el-button type="primary" class="bt" link @click="goSetting">【 {{ $t('container.setting') }} 】</el-button>
             <span>{{ $t('container.startIn') }}</span>
         </el-card>
-        <LayoutContent :title="$t('container.container')" :class="{ mask: dockerStatus != 'Running' }">
+        <LayoutContent :title="$t('container.container', 2)" :class="{ mask: dockerStatus != 'Running' }">
             <template #rightButton>
-                <div class="flex justify-end">
+                <div class="flex justify-end flex-col sm:flex-row">
                     <div class="mr-10">
                         <el-checkbox v-model="includeAppStore" @change="search()">
                             {{ $t('container.includeAppstore') }}
@@ -118,7 +118,7 @@
                         :label="$t('container.source')"
                         show-overflow-tooltip
                         prop="resource"
-                        min-width="120"
+                        min-width="150"
                     >
                         <template #default="{ row }">
                             <div v-if="row.hasLoad">
@@ -206,7 +206,7 @@
                     </el-table-column>
                     <el-table-column :label="$t('container.related')" min-width="210" prop="appName">
                         <template #default="{ row }">
-                            <div>
+                            <div class="cell-button-class">
                                 <el-tooltip
                                     v-if="row.appName != ''"
                                     :hide-after="20"
@@ -223,7 +223,7 @@
                                     </el-button>
                                 </el-tooltip>
                             </div>
-                            <div>
+                            <div class="cell-button-class">
                                 <el-tooltip
                                     v-if="row.websites != null"
                                     :hide-after="20"
@@ -251,7 +251,7 @@
                         prop="ports"
                     >
                         <template #default="{ row }">
-                            <div v-if="row.ports">
+                            <div v-if="row.ports" class="cell-button-class">
                                 <div v-for="(item, index) in row.ports" :key="index">
                                     <div v-if="row.expand || (!row.expand && index < 3)">
                                         <el-tooltip :hide-after="20" :content="item" placement="top">
@@ -292,7 +292,7 @@
                     />
                     <fu-table-operations
                         fix
-                        width="180px"
+                        width="200px"
                         :ellipsis="2"
                         :buttons="buttons"
                         :label="$t('commons.table.operate')"
@@ -546,6 +546,7 @@ const onOpenDialog = async (
     rowData: Partial<Container.ContainerHelper> = {
         cmd: [],
         cmdStr: '',
+        network: 'bridge',
         publishAllPorts: false,
         exposedPorts: [],
         cpuShares: 1024,
@@ -649,7 +650,7 @@ const onOperate = async (op: string, row: Container.ContainerInfo | null) => {
 
 const buttons = [
     {
-        label: i18n.global.t('file.terminal'),
+        label: i18n.global.t('container.containerTerminal'),
         disabled: (row: Container.ContainerInfo) => {
             return row.state !== 'running';
         },
@@ -785,5 +786,12 @@ onMounted(() => {
     margin-top: -3px;
     font-size: 6px;
     cursor: pointer;
+}
+.cell-button-class {
+    button,
+    :deep(span) {
+        max-width: 100%;
+        overflow: hidden;
+    }
 }
 </style>

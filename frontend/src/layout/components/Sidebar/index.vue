@@ -13,19 +13,20 @@
         <el-scrollbar>
             <el-menu
                 :default-active="activeMenu"
-                :router="menuRouter"
+                :router="true"
                 :collapse="isCollapse"
                 :collapse-transition="false"
                 :unique-opened="true"
                 @select="handleMenuClick"
+                class="custom-menu"
             >
                 <SubItem :menuList="routerMenus" />
-                <el-menu-item :index="''">
-                    <el-icon @click="logout">
+                <el-menu-item :index="''" @click="logout">
+                    <el-icon>
                         <SvgIcon :iconName="'p-logout'" />
                     </el-icon>
                     <template #title>
-                        <span @click="logout">{{ $t('commons.login.logout') }}</span>
+                        <span>{{ $t('commons.login.logout') }}</span>
                     </template>
                 </el-menu-item>
             </el-menu>
@@ -35,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, defineEmits } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { RouteRecordRaw, useRoute } from 'vue-router';
 import { loadingSvg } from '@/utils/svg';
 import Logo from './components/Logo.vue';
@@ -54,13 +55,7 @@ import PrimaryMenu from '@/assets/images/menu-bg.svg?component';
 const route = useRoute();
 const menuStore = MenuStore();
 const globalStore = GlobalStore();
-defineProps({
-    menuRouter: {
-        type: Boolean,
-        default: true,
-        required: false,
-    },
-});
+
 const activeMenu = computed(() => {
     const { meta, path } = route;
     return isString(meta.activeMenu) ? meta.activeMenu : path;
@@ -133,12 +128,10 @@ function getCheckedLabels(json: Node): string[] {
 
 const search = async () => {
     await checkIsSystemIntl();
-    let checkedLabels: string | any[];
-    if (!globalStore.isIntl) {
-        const res = await getSettingInfo();
-        const json: Node = JSON.parse(res.data.xpackHideMenu);
-        checkedLabels = getCheckedLabels(json);
-    }
+    let checkedLabels: any[] = [];
+    const res = await getSettingInfo();
+    const json: Node = JSON.parse(res.data.xpackHideMenu);
+    checkedLabels = getCheckedLabels(json);
 
     let rstMenuList: RouteRecordRaw[] = [];
     menuStore.menuList.forEach((item) => {
@@ -146,6 +139,9 @@ const search = async () => {
         let menuChildren: RouteRecordRaw[] = [];
         if (menuItem.path === '/xpack') {
             if (checkedLabels.length) {
+                menuItem.children = menuItem.children.filter((child: any) => {
+                    return !(globalStore.isIntl && child.path.includes('/xpack/alert'));
+                });
                 menuItem.children.forEach((child: any) => {
                     for (const str of checkedLabels) {
                         if (child.name === str) {
@@ -167,7 +163,7 @@ const search = async () => {
             rstMenuList.push(menuItem);
         } else {
             menuItem.children.forEach((child: any) => {
-                if (child.hidden == undefined || child.hidden == false) {
+                if (!child.hidden) {
                     menuChildren.push(child);
                 }
             });
@@ -190,7 +186,14 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-@import './index.scss';
+@use 'index';
+
+.custom-menu .el-menu-item {
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: normal;
+}
 
 .sidebar-container {
     position: relative;

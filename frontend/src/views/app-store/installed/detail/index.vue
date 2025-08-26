@@ -67,7 +67,11 @@
                             <el-checkbox v-model="paramModel.allowPort" :label="$t('app.allowPort')" size="large" />
                             <span class="input-help">{{ $t('app.allowPortHelper') }}</span>
                         </el-form-item>
-                        <el-form-item :label="$t('container.cpuQuota')" prop="cpuQuota">
+                        <el-form-item
+                            :label="$t('container.cpuQuota')"
+                            prop="cpuQuota"
+                            :rules="checkNumberRange(0, limits.cpu)"
+                        >
                             <el-input
                                 type="number"
                                 style="width: 40%"
@@ -76,21 +80,37 @@
                             >
                                 <template #append>{{ $t('app.cpuCore') }}</template>
                             </el-input>
-                            <span class="input-help">{{ $t('container.limitHelper') }}</span>
+                            <span class="input-help">
+                                {{ $t('container.limitHelper', [limits.cpu]) }} {{ $t('commons.units.core') }}
+                            </span>
                         </el-form-item>
-                        <el-form-item :label="$t('container.memoryLimit')" prop="memoryLimit">
+                        <el-form-item
+                            :label="$t('container.memoryLimit')"
+                            prop="memoryLimit"
+                            :rules="checkNumberRange(0, limits.memory)"
+                        >
                             <el-input style="width: 40%" v-model.number="paramModel.memoryLimit" maxlength="10">
                                 <template #append>
-                                    <el-select v-model="paramModel.memoryUnit" placeholder="Select" style="width: 85px">
+                                    <el-select
+                                        v-model="paramModel.memoryUnit"
+                                        placeholder="Select"
+                                        style="width: 85px"
+                                        @change="changeUnit"
+                                    >
                                         <el-option label="KB" value="K" />
                                         <el-option label="MB" value="M" />
                                         <el-option label="GB" value="G" />
                                     </el-select>
                                 </template>
                             </el-input>
-                            <span class="input-help">{{ $t('container.limitHelper') }}</span>
+                            <span class="input-help">
+                                {{ $t('container.limitHelper', [limits.memory]) }} {{ paramModel.memoryUnit }}B
+                            </span>
                         </el-form-item>
-
+                        <el-form-item pro="gpuConfig" v-if="gpuSupport">
+                            <el-checkbox v-model="paramModel.gpuConfig" :label="$t('app.gpuConfig')" size="large" />
+                            <span class="input-help">{{ $t('app.gpuConfigHelper') }}</span>
+                        </el-form-item>
                         <el-form-item prop="editCompose">
                             <el-checkbox v-model="paramModel.editCompose" :label="$t('app.editCompose')" size="large" />
                             <span class="input-help">{{ $t('app.editComposeHelper') }}</span>
@@ -134,19 +154,23 @@ import { Rules, checkNumberRange } from '@/global/form-rules';
 import { MsgSuccess } from '@/utils/message';
 import i18n from '@/lang';
 import { Codemirror } from 'vue-codemirror';
-import { javascript } from '@codemirror/lang-javascript';
+import { yaml } from '@codemirror/lang-yaml';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { getLanguage } from '@/utils/util';
+import { Container } from '@/api/interface/container';
+import { loadResourceLimit } from '@/api/modules/container';
 
-const extensions = [javascript(), oneDark];
+const extensions = [yaml(), oneDark];
 
 interface ParamProps {
     id: Number;
     app: any;
+    gpuSupport?: boolean;
 }
 const paramData = ref<ParamProps>({
     id: 0,
     app: {},
+    gpuSupport: false,
 });
 
 interface EditForm extends App.InstallParams {
@@ -163,17 +187,39 @@ const paramModel = ref<any>({
 });
 const rules = reactive({
     params: {},
-    cpuQuota: [Rules.requiredInput, checkNumberRange(0, 999)],
-    memoryLimit: [Rules.requiredInput, checkNumberRange(0, 9999999999)],
     containerName: [Rules.containerName],
 });
 const submitModel = ref<any>({});
+const oldMemory = ref<number>(0);
+const limits = ref<Container.ResourceLimit>({
+    cpu: null as number,
+    memory: null as number,
+});
+const gpuSupport = ref(false);
+const em = defineEmits(['close']);
+
+const changeUnit = () => {
+    if (paramModel.value.memoryUnit == 'M') {
+        limits.value.memory = oldMemory.value;
+    } else {
+        limits.value.memory = Number((oldMemory.value / 1024).toFixed(2));
+    }
+};
+
+const loadLimit = async () => {
+    const res = await loadResourceLimit();
+    limits.value = res.data;
+    limits.value.memory = Number((limits.value.memory / 1024 / 1024).toFixed(2));
+    oldMemory.value = limits.value.memory;
+};
 
 const acceptParams = async (props: ParamProps) => {
+    loadLimit();
     submitModel.value.installId = props.id;
     params.value = [];
     paramData.value.id = props.id;
     paramModel.value.params = {};
+    gpuSupport.value = props.gpuSupport;
     edit.value = false;
     await get();
     open.value = true;
@@ -181,6 +227,7 @@ const acceptParams = async (props: ParamProps) => {
 
 const handleClose = () => {
     open.value = false;
+    em('close', open);
 };
 const editParam = () => {
     params.value.forEach((param: EditForm) => {
@@ -221,12 +268,13 @@ const get = async () => {
         }
         paramModel.value.memoryLimit = res.data.memoryLimit;
         paramModel.value.cpuQuota = res.data.cpuQuota;
-        paramModel.value.memoryUnit = res.data.memoryUnit !== '' ? res.data.memoryUnit : 'MB';
+        paramModel.value.memoryUnit = res.data.memoryUnit !== '' ? res.data.memoryUnit : 'M';
         paramModel.value.allowPort = res.data.allowPort;
         paramModel.value.containerName = res.data.containerName;
         paramModel.value.advanced = false;
         paramModel.value.dockerCompose = res.data.dockerCompose;
         paramModel.value.isHostMode = res.data.hostMode;
+        paramModel.value.gpuConfig = res.data.gpuConfig;
     } catch (error) {
     } finally {
         loading.value = false;
@@ -265,6 +313,7 @@ const submit = async (formEl: FormInstance) => {
                     submitModel.value.editCompose = paramModel.value.editCompose;
                     submitModel.value.dockerCompose = paramModel.value.dockerCompose;
                 }
+                submitModel.value.gpuConfig = paramModel.value.gpuConfig;
             }
             try {
                 loading.value = true;

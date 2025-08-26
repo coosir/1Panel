@@ -29,7 +29,7 @@
             </el-card>
         </div>
 
-        <LayoutContent style="margin-top: 20px" :title="$t('container.setting')" :divider="true">
+        <LayoutContent style="margin-top: 20px" :title="$t('container.setting', 2)" :divider="true">
             <template #main>
                 <el-radio-group v-model="confShowType" @change="changeMode">
                     <el-radio-button value="base">{{ $t('database.baseConf') }}</el-radio-button>
@@ -38,7 +38,7 @@
                 <el-row style="margin-top: 20px" v-if="confShowType === 'base'">
                     <el-col :span="1"><br /></el-col>
                     <el-col :xs="24" :sm="24" :md="15" :lg="12" :xl="10">
-                        <el-form :model="form" label-position="left" :rules="rules" ref="formRef" label-width="120px">
+                        <el-form :model="form" label-position="left" :rules="rules" ref="formRef" label-width="auto">
                             <el-form-item :label="$t('container.mirrors')" prop="mirrors">
                                 <div
                                     class="flex w-full justify-start flex-col sm:flex-row sm:items-end"
@@ -51,7 +51,7 @@
                                         v-model="form.mirrors"
                                         class="sm:calc(100% - 80px)"
                                     />
-                                    <el-button @click="onChangeMirrors" icon="Setting">
+                                    <el-button @click="onChangeMirrors" icon="Setting" class="custom-input-textarea">
                                         {{ $t('commons.button.set') }}
                                     </el-button>
                                 </div>
@@ -98,7 +98,7 @@
                                 </el-input>
                             </el-form-item>
 
-                            <el-form-item label="ipv6" prop="ipv6">
+                            <el-form-item label="IPv6" prop="ipv6">
                                 <el-switch v-model="form.ipv6" @change="handleIPv6"></el-switch>
                                 <span class="input-help"></span>
                                 <div v-if="ipv6OptionShow">
@@ -131,7 +131,7 @@
                                 <el-switch v-model="form.iptables" @change="handleIptables"></el-switch>
                                 <span class="input-help">{{ $t('container.iptablesHelper1') }}</span>
                             </el-form-item>
-                            <el-form-item label="live-restore" prop="liveRestore">
+                            <el-form-item label="Live restore" prop="liveRestore">
                                 <el-switch
                                     :disabled="form.isSwarm"
                                     v-model="form.liveRestore"
@@ -142,7 +142,7 @@
                                     {{ $t('container.liveWithSwarmHelper') }}
                                 </span>
                             </el-form-item>
-                            <el-form-item label="cgroup-driver" prop="cgroupDriver">
+                            <el-form-item label="cgroup driver" prop="cgroupDriver">
                                 <el-radio-group v-model="form.cgroupDriver" @change="handleCgroup">
                                     <el-radio value="cgroupfs">cgroupfs</el-radio>
                                     <el-radio value="systemd">systemd</el-radio>
@@ -436,7 +436,7 @@ const save = async (key: string, value: string) => {
 };
 
 const toDoc = () => {
-    window.open('https://1panel.cn/docs/user_manual/containers/setting/', '_blank', 'noopener,noreferrer');
+    window.open(globalStore.docsUrl + '/user_manual/containers/setting/', '_blank', 'noopener,noreferrer');
 };
 
 const onOperator = async (operation: string) => {

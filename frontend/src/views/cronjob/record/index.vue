@@ -223,6 +223,7 @@
             <el-form ref="deleteForm" label-position="left" v-loading="delLoading">
                 <el-form-item>
                     <el-checkbox v-model="cleanData" :label="$t('cronjob.cleanData')" />
+                    <el-checkbox v-if="cleanData" v-model="cleanRemoteData" :label="$t('cronjob.cleanRemoteData')" />
                     <span class="input-help">
                         {{ $t('cronjob.cleanDataHelper') }}
                     </span>
@@ -282,6 +283,7 @@ const currentRecordDetail = ref<string>('');
 const deleteVisible = ref();
 const delLoading = ref();
 const cleanData = ref();
+const cleanRemoteData = ref(true);
 
 const acceptParams = async (params: DialogProps): Promise<void> => {
     let itemSize = Number(localStorage.getItem(searchInfo.cacheSizeKey));
@@ -393,6 +395,7 @@ const search = async () => {
     if (!currentRecord.value) {
         currentRecord.value = records.value[0];
     } else {
+        let oldRecordID = currentRecord.value.id;
         let beDelete = true;
         for (const item of records.value) {
             if (item.id === currentRecord.value.id) {
@@ -403,6 +406,9 @@ const search = async () => {
         }
         if (beDelete) {
             currentRecord.value = records.value[0];
+        }
+        if (oldRecordID === currentRecord.value.id && currentRecord.value.status !== 'Waiting') {
+            return;
         }
     }
     if (currentRecord.value?.records) {
@@ -417,7 +423,7 @@ const forDetail = async (row: Cronjob.Record) => {
 const loadRecord = async (row: Cronjob.Record) => {
     if (row.records) {
         const res = await getRecordLog(row.id);
-        let log = res.data.replace(/\x1B\[[0-?]*[ -/]*[@-~]/g, '');
+        let log = res.data.replace(/\x1B\[[0-?]*[ -/]*[@-~]/g, '').replace(/\r/g, '');
         if (currentRecordDetail.value === log) {
             return;
         }
@@ -433,26 +439,30 @@ const loadRecord = async (row: Cronjob.Record) => {
 };
 
 const onClean = async () => {
-    ElMessageBox.confirm(i18n.global.t('commons.msg.clean'), i18n.global.t('commons.msg.deleteTitle'), {
-        confirmButtonText: i18n.global.t('commons.button.confirm'),
-        cancelButtonText: i18n.global.t('commons.button.cancel'),
-        type: 'warning',
-    }).then(async () => {
-        await cleanRecords(dialogData.value.rowData.id, cleanData.value)
-            .then(() => {
-                delLoading.value = false;
-                MsgSuccess(i18n.global.t('commons.msg.operationSuccess'));
-                search();
-            })
-            .catch(() => {
-                delLoading.value = false;
-            });
-    });
+    if (!isBackup()) {
+        ElMessageBox.confirm(i18n.global.t('commons.msg.clean'), i18n.global.t('commons.msg.deleteTitle'), {
+            confirmButtonText: i18n.global.t('commons.button.confirm'),
+            cancelButtonText: i18n.global.t('commons.button.cancel'),
+            type: 'warning',
+        }).then(async () => {
+            await cleanRecords(dialogData.value.rowData.id, cleanData.value, cleanRemoteData.value)
+                .then(() => {
+                    delLoading.value = false;
+                    MsgSuccess(i18n.global.t('commons.msg.operationSuccess'));
+                    search();
+                })
+                .catch(() => {
+                    delLoading.value = false;
+                });
+        });
+    } else {
+        deleteVisible.value = true;
+    }
 };
 
 const cleanRecord = async () => {
     delLoading.value = true;
-    await cleanRecords(dialogData.value.rowData.id, cleanData.value)
+    await cleanRecords(dialogData.value.rowData.id, cleanData.value, cleanRemoteData.value)
         .then(() => {
             delLoading.value = false;
             deleteVisible.value = false;
@@ -463,6 +473,17 @@ const cleanRecord = async () => {
             delLoading.value = false;
         });
 };
+
+function isBackup() {
+    return (
+        dialogData.value.rowData!.type === 'app' ||
+        dialogData.value.rowData!.type === 'website' ||
+        dialogData.value.rowData!.type === 'database' ||
+        dialogData.value.rowData!.type === 'directory' ||
+        dialogData.value.rowData!.type === 'snapshot' ||
+        dialogData.value.rowData!.type === 'log'
+    );
+}
 
 onBeforeUnmount(() => {
     clearInterval(Number(timer));

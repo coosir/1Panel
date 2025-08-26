@@ -16,7 +16,7 @@
                         <SystemUpgrade />
                     </div>
                     <div class="flex w-full justify-center my-5 flex-wrap md:flex-row gap-4">
-                        <el-link @click="toDoc" class="system-link" v-if="!globalStore.isIntl">
+                        <el-link @click="toDoc" class="system-link">
                             <el-icon><Document /></el-icon>
                             <span>{{ $t('setting.doc2') }}</span>
                         </el-link>
@@ -45,7 +45,9 @@ import { onMounted, ref } from 'vue';
 import SystemUpgrade from '@/components/system-upgrade/index.vue';
 import { GlobalStore } from '@/store';
 import PrimaryLogo from '@/assets/images/1panel-logo.svg?component';
+import { storeToRefs } from 'pinia';
 const globalStore = GlobalStore();
+const { docsUrl } = storeToRefs(globalStore);
 
 const version = ref();
 const loading = ref();
@@ -55,7 +57,7 @@ const search = async () => {
 };
 
 const toDoc = () => {
-    window.open('https://1panel.cn/docs/', '_blank', 'noopener,noreferrer');
+    window.open(docsUrl.value, '_blank', 'noopener,noreferrer');
 };
 const toGithub = () => {
     window.open('https://github.com/1Panel-dev/1Panel', '_blank', 'noopener,noreferrer');

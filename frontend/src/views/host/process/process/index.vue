@@ -1,7 +1,7 @@
 <template>
     <div>
         <FireRouter />
-        <LayoutContent :title="$t('menu.process')" v-loading="loading">
+        <LayoutContent :title="$t('menu.process', 2)" v-loading="loading">
             <template #toolbar>
                 <div class="flex justify-between gap-2 flex-wrap sm:flex-row">
                     <div><!-- 占位 --></div>
@@ -54,11 +54,17 @@
                     <el-table-column
                         :label="$t('process.memory')"
                         fix
+                        min-width="120"
                         prop="rssValue"
                         :formatter="memFormatter"
                         sortable
                     ></el-table-column>
-                    <el-table-column :label="$t('process.numConnections')" fix prop="numConnections"></el-table-column>
+                    <el-table-column
+                        :label="$t('process.numConnections')"
+                        fix
+                        prop="numConnections"
+                        min-width="120"
+                    ></el-table-column>
                     <el-table-column
                         :label="$t('process.status')"
                         fix
@@ -124,7 +130,7 @@ const opRef = ref();
 
 const buttons = [
     {
-        label: i18n.global.t('app.detail'),
+        label: i18n.global.t('process.viewDetails'),
         click: function (row: any) {
             openDetail(row);
         },

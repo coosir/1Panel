@@ -77,7 +77,7 @@
                             {{ $t('database.loadFromRemote') }}
                         </el-button>
                         <el-button @click="goRemoteDB" type="primary" plain>
-                            {{ $t('database.remoteDB') }}
+                            {{ $t('database.manageRemoteDB') }}
                         </el-button>
                         <el-button @click="goDashboard()" type="primary" plain>PGAdmin4</el-button>
                     </div>
@@ -168,10 +168,11 @@
                         show-overflow-tooltip
                     />
                     <fu-table-operations
-                        width="370px"
+                        :ellipsis="mobile ? 0 : 10"
+                        :min-width="mobile ? 'auto' : 400"
                         :buttons="buttons"
-                        :ellipsis="10"
                         :label="$t('commons.table.operate')"
+                        fixed="right"
                         fix
                     />
                 </ComplexTable>
@@ -186,18 +187,18 @@
         </el-card>
 
         <div v-if="dbOptionsLocal.length === 0 && dbOptionsRemote.length === 0">
-            <LayoutContent :title="'PostgreSQL ' + $t('menu.database')" :divider="true">
+            <LayoutContent :title="'PostgreSQL ' + $t('menu.database').toLowerCase()" :divider="true">
                 <template #main>
                     <div class="app-warn">
-                        <div>
+                        <div class="flex flex-col gap-2 items-center justify-center w-full sm:flex-row">
                             <span>{{ $t('app.checkInstalledWarn', [$t('database.noPostgresql')]) }}</span>
-                            <span @click="goRouter('app')">
-                                <el-icon class="ml-2"><Position /></el-icon>
+                            <span @click="goRouter('app')" class="flex items-center justify-center gap-0.5">
+                                <el-icon><Position /></el-icon>
                                 {{ $t('database.goInstall') }}
                             </span>
-                            <div>
-                                <img src="@/assets/images/no_app.svg" />
-                            </div>
+                        </div>
+                        <div>
+                            <img src="@/assets/images/no_app.svg" />
                         </div>
                     </div>
                 </template>
@@ -252,7 +253,7 @@ import Backups from '@/components/backup/index.vue';
 import UploadDialog from '@/components/upload/index.vue';
 import PortJumpDialog from '@/components/port-jump/index.vue';
 import { dateFormat } from '@/utils/util';
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import {
     deleteCheckPostgresqlDB,
     listDatabases,
@@ -330,6 +331,10 @@ const onChangeConn = async () => {
         database: currentDBName.value,
     });
 };
+
+const mobile = computed(() => {
+    return globalStore.isMobile();
+});
 
 const goRemoteDB = async () => {
     if (currentDB.value) {

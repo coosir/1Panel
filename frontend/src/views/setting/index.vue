@@ -9,8 +9,6 @@
 
 <script lang="ts" setup>
 import i18n from '@/lang';
-import { GlobalStore } from '@/store';
-const globalStore = GlobalStore();
 
 const buttons = [
     {
@@ -22,11 +20,11 @@ const buttons = [
         path: '/settings/safe',
     },
     {
-        label: i18n.global.t('setting.backupAccount'),
+        label: i18n.global.t('setting.backupAccount', 2),
         path: '/settings/backupaccount',
     },
     {
-        label: i18n.global.t('setting.snapshot'),
+        label: i18n.global.t('setting.snapshot', 2),
         path: '/settings/snapshot',
     },
     {
@@ -34,8 +32,4 @@ const buttons = [
         path: '/settings/license',
     },
 ];
-
-if (globalStore.isIntl) {
-    buttons.splice(4, 1);
-}
 </script>

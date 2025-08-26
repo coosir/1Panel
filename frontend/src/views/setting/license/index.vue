@@ -36,7 +36,7 @@
                                     {{ license.productName || '-' }}
                                 </el-descriptions-item>
                                 <el-descriptions-item :label="$t('license.trialInfo')">
-                                    {{ license.trial ? $t('license.trial') : $t('license.office') }}
+                                    {{ loadVersion() }}
                                 </el-descriptions-item>
                                 <el-descriptions-item :label="$t('license.expiresAt')">
                                     {{ license.expiresAt || '-' }}
@@ -66,7 +66,7 @@
                                             <span>{{ $t('setting.license') }}</span>
                                         </el-col>
                                         <el-col :span="6">
-                                            <span>{{ $t('license.community2') }}</span>
+                                            <span>{{ $t('license.oss') }}</span>
                                         </el-col>
                                     </el-row>
                                 </div>
@@ -77,10 +77,10 @@
                     <el-col :xs="24" :sm="24" :md="9" :lg="9" :xl="9">
                         <CardWithHeader :header="$t('license.quickUpdate')" height="160px">
                             <template #body>
-                                <div class="h-app-card">
+                                <div class="h-app-card" v-if="globalStore.licenseVerify != 'TC' || !hasLicense">
                                     <el-row>
                                         <el-col :span="15">
-                                            <div class="h-app-content">{{ $t('license.importLicense') }}：</div>
+                                            <div class="h-app-content">{{ $t('license.importLicense') }}</div>
                                         </el-col>
                                         <el-col :span="5">
                                             <el-button type="primary" plain round size="small" @click="toUpload">
@@ -92,10 +92,10 @@
                                 <div class="h-app-card">
                                     <el-row>
                                         <el-col :span="15">
-                                            <div class="h-app-content">{{ $t('license.technicalAdvice') }}：</div>
+                                            <div class="h-app-content">{{ $t('license.technicalAdvice') }}</div>
                                         </el-col>
                                         <el-col :span="5">
-                                            <el-button type="primary" plain round size="small" @click="toHalo()">
+                                            <el-button type="primary" plain round size="small" @click="toLxware()">
                                                 {{ $t('license.advice') }}
                                             </el-button>
                                         </el-col>
@@ -134,16 +134,35 @@ const license = reactive({
     assigneeName: '',
     productName: '',
 
+    versionConstraint: '',
+    productPro: '',
     status: '',
     message: '',
 });
 
-const toHalo = () => {
-    window.open('https://www.lxware.cn/1panel' + '', '_blank', 'noopener,noreferrer');
+const toLxware = () => {
+    if (!globalStore.isIntl) {
+        window.open('https://www.lxware.cn/1panel' + '', '_blank', 'noopener,noreferrer');
+    } else {
+        window.open('https://1panel.pro/pricing' + '', '_blank', 'noopener,noreferrer');
+    }
 };
 
 const loadInfo = () => {
     return license.status === 'Lost' ? i18n.global.t('license.lostHelper') : i18n.global.t('license.disableHelper');
+};
+
+const loadVersion = () => {
+    if (license.trial) {
+        return i18n.global.t('license.trial');
+    }
+    if (license.productPro && license.productPro !== '0') {
+        return i18n.global.t('license.subscription');
+    }
+    if (license.versionConstraint) {
+        return i18n.global.t('license.versionConstraint', ['v' + license.versionConstraint.replace('.x', '')]);
+    }
+    return i18n.global.t('license.perpetual');
 };
 
 const onSync = async () => {
@@ -218,6 +237,8 @@ const search = async () => {
             license.assigneeName = res.data.assigneeName;
             license.trial = res.data.trial;
             license.offline = res.data.offline;
+            license.productPro = res.data.productPro;
+            license.versionConstraint = res.data.versionConstraint;
             if (res.data.productPro) {
                 license.productName = 'product-1panel-pro';
                 license.expiresAt =

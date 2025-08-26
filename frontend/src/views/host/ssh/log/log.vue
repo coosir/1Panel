@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LayoutContent v-loading="loading" :title="$t('ssh.loginLogs')">
+        <LayoutContent v-loading="loading" :title="'SSH ' + $t('ssh.loginLogs', 2)">
             <template #prompt>
                 <el-alert type="info" :title="$t('ssh.sshAlert2')" :closable="false" />
                 <div class="mt-2"><el-alert type="info" :title="$t('ssh.sshAlert')" :closable="false" /></div>
@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { dateFormat } from '@/utils/util';
-import { onMounted, reactive, ref } from '@vue/runtime-core';
+import { onMounted, reactive, ref } from 'vue';
 import { loadSSHLogs } from '@/api/modules/host';
 
 const loading = ref();

@@ -8,7 +8,7 @@
             size="50%"
         >
             <template #header>
-                <DrawerHeader :header="title + $t('setting.backupAccount')" :back="handleClose" />
+                <DrawerHeader :header="title + $t('setting.backupAccount').toLowerCase()" :back="handleClose" />
             </template>
             <el-form @submit.prevent ref="formRef" v-loading="loading" label-position="top" :model="s3Data.rowData">
                 <el-row type="flex" justify="center">
@@ -22,7 +22,7 @@
                                 <el-radio value="path">Path</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                        <el-form-item label="Access Key ID" prop="accessKey" :rules="Rules.requiredInput">
+                        <el-form-item label="Access key ID" prop="accessKey" :rules="Rules.requiredInput">
                             <el-input v-model.trim="s3Data.rowData!.accessKey" />
                         </el-form-item>
                         <el-form-item label="Secret Key" prop="credential" :rules="Rules.requiredInput">

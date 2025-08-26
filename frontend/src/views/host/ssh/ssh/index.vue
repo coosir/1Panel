@@ -52,7 +52,7 @@
             </el-card>
         </div>
 
-        <LayoutContent style="margin-top: 20px" :title="$t('menu.config')" :divider="true">
+        <LayoutContent style="margin-top: 20px" :title="$t('ssh.setting')" :divider="true">
             <template #main>
                 <el-radio-group v-model="confShowType" @change="changeMode">
                     <el-radio-button value="base">{{ $t('database.baseConf') }}</el-radio-button>
@@ -62,7 +62,7 @@
                     <el-col :span="1"><br /></el-col>
                     <el-col :xs="24" :sm="20" :md="20" :lg="10" :xl="10">
                         <el-form :model="form" label-position="left" ref="formRef" label-width="120px">
-                            <el-form-item :label="$t('commons.table.port')" prop="port">
+                            <el-form-item :label="$t('ssh.port')" prop="port">
                                 <el-input disabled v-model.number="form.port">
                                     <template #append>
                                         <el-button @click="onChangePort" icon="Setting">

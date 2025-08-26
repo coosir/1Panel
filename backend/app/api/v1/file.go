@@ -32,26 +32,28 @@ import (
 // @Param request body request.FileOption true "request"
 // @Success 200 {object} response.FileInfo
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/search [post]
 func (b *BaseApi) ListFiles(c *gin.Context) {
 	var req request.FileOption
 	if err := helper.CheckBindAndValidate(&req, c); err != nil {
 		return
 	}
-	files, err := fileService.GetFileList(req)
+	fileList, err := fileService.GetFileList(req)
 	if err != nil {
 		helper.ErrorWithDetail(c, constant.CodeErrInternalServer, constant.ErrTypeInternalServer, err)
 		return
 	}
-	helper.SuccessWithData(c, files)
+	helper.SuccessWithData(c, fileList)
 }
 
 // @Tags File
 // @Summary Page file
 // @Accept json
 // @Param request body request.SearchUploadWithPage true "request"
-// @Success 200 {array} response.FileInfo
+// @Success 200 {object} dto.PageResult
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/upload/search [post]
 func (b *BaseApi) SearchUploadWithPage(c *gin.Context) {
 	var req request.SearchUploadWithPage
@@ -75,6 +77,7 @@ func (b *BaseApi) SearchUploadWithPage(c *gin.Context) {
 // @Param request body request.FileOption true "request"
 // @Success 200 {array} response.FileTree
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/tree [post]
 func (b *BaseApi) GetFileTree(c *gin.Context) {
 	var req request.FileOption
@@ -95,6 +98,7 @@ func (b *BaseApi) GetFileTree(c *gin.Context) {
 // @Param request body request.FileCreate true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files [post]
 // @x-panel-log {"bodyKeys":["path"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"创建文件/文件夹 [path]","formatEN":"Create dir or file [path]"}
 func (b *BaseApi) CreateFile(c *gin.Context) {
@@ -116,6 +120,7 @@ func (b *BaseApi) CreateFile(c *gin.Context) {
 // @Param request body request.FileDelete true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/del [post]
 // @x-panel-log {"bodyKeys":["path"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"删除文件/文件夹 [path]","formatEN":"Delete dir or file [path]"}
 func (b *BaseApi) DeleteFile(c *gin.Context) {
@@ -137,6 +142,7 @@ func (b *BaseApi) DeleteFile(c *gin.Context) {
 // @Param request body request.FileBatchDelete true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/batch/del [post]
 // @x-panel-log {"bodyKeys":["paths"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"批量删除文件/文件夹 [paths]","formatEN":"Batch delete dir or file [paths]"}
 func (b *BaseApi) BatchDeleteFile(c *gin.Context) {
@@ -158,6 +164,7 @@ func (b *BaseApi) BatchDeleteFile(c *gin.Context) {
 // @Param request body request.FileCreate true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/mode [post]
 // @x-panel-log {"bodyKeys":["path","mode"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"修改权限 [paths] => [mode]","formatEN":"Change mode [paths] => [mode]"}
 func (b *BaseApi) ChangeFileMode(c *gin.Context) {
@@ -179,6 +186,7 @@ func (b *BaseApi) ChangeFileMode(c *gin.Context) {
 // @Param request body request.FileRoleUpdate true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/owner [post]
 // @x-panel-log {"bodyKeys":["path","user","group"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"修改用户/组 [paths] => [user]/[group]","formatEN":"Change owner [paths] => [user]/[group]"}
 func (b *BaseApi) ChangeFileOwner(c *gin.Context) {
@@ -199,6 +207,7 @@ func (b *BaseApi) ChangeFileOwner(c *gin.Context) {
 // @Param request body request.FileCompress true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/compress [post]
 // @x-panel-log {"bodyKeys":["name"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"压缩文件 [name]","formatEN":"Compress file [name]"}
 func (b *BaseApi) CompressFile(c *gin.Context) {
@@ -220,6 +229,7 @@ func (b *BaseApi) CompressFile(c *gin.Context) {
 // @Param request body request.FileDeCompress true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/decompress [post]
 // @x-panel-log {"bodyKeys":["path"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"解压 [path]","formatEN":"Decompress file [path]"}
 func (b *BaseApi) DeCompressFile(c *gin.Context) {
@@ -241,6 +251,7 @@ func (b *BaseApi) DeCompressFile(c *gin.Context) {
 // @Param request body request.FileContentReq true "request"
 // @Success 200 {object} response.FileInfo
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/content [post]
 // @x-panel-log {"bodyKeys":["path"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"获取文件内容 [path]","formatEN":"Load file content [path]"}
 func (b *BaseApi) GetContent(c *gin.Context) {
@@ -262,6 +273,7 @@ func (b *BaseApi) GetContent(c *gin.Context) {
 // @Param request body request.FileEdit true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/save [post]
 // @x-panel-log {"bodyKeys":["path"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"更新文件内容 [path]","formatEN":"Update file content [path]"}
 func (b *BaseApi) SaveContent(c *gin.Context) {
@@ -278,9 +290,11 @@ func (b *BaseApi) SaveContent(c *gin.Context) {
 
 // @Tags File
 // @Summary Upload file
+// @Accept multipart/form-data
 // @Param file formData file true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/upload [post]
 // @x-panel-log {"bodyKeys":["path"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"上传文件 [path]","formatEN":"Upload file [path]"}
 func (b *BaseApi) UploadFiles(c *gin.Context) {
@@ -387,19 +401,46 @@ func (b *BaseApi) UploadFiles(c *gin.Context) {
 // @Summary Check file exist
 // @Accept json
 // @Param request body request.FilePathCheck true "request"
-// @Success 200
+// @Success 200 {boolean} isOk
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/check [post]
 func (b *BaseApi) CheckFile(c *gin.Context) {
 	var req request.FilePathCheck
 	if err := helper.CheckBindAndValidate(&req, c); err != nil {
 		return
 	}
-	if _, err := os.Stat(req.Path); err != nil {
-		helper.SuccessWithData(c, false)
+	fileOp := files.NewFileOp()
+	if fileOp.Stat(req.Path) {
+		helper.SuccessWithData(c, true)
 		return
 	}
-	helper.SuccessWithData(c, true)
+	if req.WithInit {
+		if err := fileOp.CreateDir(req.Path, 0644); err != nil {
+			helper.SuccessWithData(c, false)
+			return
+		}
+		helper.SuccessWithData(c, true)
+		return
+	}
+	helper.SuccessWithData(c, false)
+}
+
+// @Tags File
+// @Summary Batch check file exist
+// @Accept json
+// @Param request body request.FilePathsCheck true "request"
+// @Success 200 {array} response.ExistFileInfo
+// @Security ApiKeyAuth
+// @Security Timestamp
+// @Router /files/batch/check [post]
+func (b *BaseApi) BatchCheckFiles(c *gin.Context) {
+	var req request.FilePathsCheck
+	if err := helper.CheckBindAndValidate(&req, c); err != nil {
+		return
+	}
+	fileList := fileService.BatchCheckFiles(req)
+	helper.SuccessWithData(c, fileList)
 }
 
 // @Tags File
@@ -408,6 +449,7 @@ func (b *BaseApi) CheckFile(c *gin.Context) {
 // @Param request body request.FileRename true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/rename [post]
 // @x-panel-log {"bodyKeys":["oldName","newName"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"重命名 [oldName] => [newName]","formatEN":"Rename [oldName] => [newName]"}
 func (b *BaseApi) ChangeFileName(c *gin.Context) {
@@ -426,8 +468,9 @@ func (b *BaseApi) ChangeFileName(c *gin.Context) {
 // @Summary Wget file
 // @Accept json
 // @Param request body request.FileWget true "request"
-// @Success 200
+// @Success 200 {object} response.FileWgetRes
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/wget [post]
 // @x-panel-log {"bodyKeys":["url","path","name"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"下载 url => [path]/[name]","formatEN":"Download url => [path]/[name]"}
 func (b *BaseApi) WgetFile(c *gin.Context) {
@@ -451,6 +494,7 @@ func (b *BaseApi) WgetFile(c *gin.Context) {
 // @Param request body request.FileMove true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/move [post]
 // @x-panel-log {"bodyKeys":["oldPaths","newPath"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"移动文件 [oldPaths] => [newPath]","formatEN":"Move [oldPaths] => [newPath]"}
 func (b *BaseApi) MoveFile(c *gin.Context) {
@@ -470,6 +514,7 @@ func (b *BaseApi) MoveFile(c *gin.Context) {
 // @Accept json
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/download [get]
 func (b *BaseApi) Download(c *gin.Context) {
 	filePath := c.Query("path")
@@ -490,6 +535,7 @@ func (b *BaseApi) Download(c *gin.Context) {
 // @Param request body request.FileDownload true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/chunkdownload [post]
 // @x-panel-log {"bodyKeys":["name"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"下载文件 [name]","formatEN":"Download file [name]"}
 func (b *BaseApi) DownloadChunkFiles(c *gin.Context) {
@@ -564,8 +610,9 @@ func (b *BaseApi) DownloadChunkFiles(c *gin.Context) {
 // @Summary Load file size
 // @Accept json
 // @Param request body request.DirSizeReq true "request"
-// @Success 200
+// @Success 200 {object} response.DirSizeRes
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/size [post]
 // @x-panel-log {"bodyKeys":["path"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"获取文件夹大小 [path]","formatEN":"Load file size [path]"}
 func (b *BaseApi) Size(c *gin.Context) {
@@ -642,9 +689,11 @@ func mergeChunks(fileName string, fileDir string, dstDir string, chunkCount int,
 
 // @Tags File
 // @Summary Chunk upload file
+// @Accept multipart/form-data
 // @Param file formData file true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/chunkupload [post]
 func (b *BaseApi) UploadChunkFiles(c *gin.Context) {
 	var err error
@@ -763,8 +812,9 @@ func (b *BaseApi) Keys(c *gin.Context) {
 // @Tags File
 // @Summary Read file by Line
 // @Param request body request.FileReadByLineReq true "request"
-// @Success 200
+// @Success 200 {object} response.FileLineContent
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/read [post]
 func (b *BaseApi) ReadFileByLine(c *gin.Context) {
 	var req request.FileReadByLineReq
@@ -785,6 +835,7 @@ func (b *BaseApi) ReadFileByLine(c *gin.Context) {
 // @Param request body request.FileRoleReq true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/batch/role [post]
 // @x-panel-log {"bodyKeys":["paths","mode","user","group"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"批量修改文件权限和用户/组 [paths] => [mode]/[user]/[group]","formatEN":"Batch change file mode and owner [paths] => [mode]/[user]/[group]"}
 func (b *BaseApi) BatchChangeModeAndOwner(c *gin.Context) {

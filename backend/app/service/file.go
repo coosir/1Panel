@@ -50,6 +50,7 @@ type IFileService interface {
 	ChangeMode(op request.FileCreate) error
 	BatchChangeModeAndOwner(op request.FileRoleReq) error
 	ReadLogByLine(req request.FileReadByLineReq) (*response.FileLineContent, error)
+	BatchCheckFiles(req request.FilePathsCheck) []response.ExistFileInfo
 }
 
 var filteredPaths = []string{
@@ -365,10 +366,18 @@ func (f *FileService) MvFile(m request.FileMove) error {
 			return buserr.New(constant.ErrMovePathFailed)
 		}
 	}
+	var errs []error
 	if m.Type == "cut" {
+		if len(m.CoverPaths) > 0 {
+			for _, src := range m.CoverPaths {
+				if err := fo.CopyAndReName(src, m.NewPath, "", true); err != nil {
+					errs = append(errs, err)
+					global.LOG.Errorf("cut copy file [%s] to [%s] failed, err: %s", src, m.NewPath, err.Error())
+				}
+			}
+		}
 		return fo.Cut(m.OldPaths, m.NewPath, m.Name, m.Cover)
 	}
-	var errs []error
 	if m.Type == "copy" {
 		for _, src := range m.OldPaths {
 			if err := fo.CopyAndReName(src, m.NewPath, m.Name, m.Cover); err != nil {
@@ -478,6 +487,12 @@ func (f *FileService) ReadLogByLine(req request.FileReadByLineReq) (*response.Fi
 		}
 	case "image-pull", "image-push", "image-build", "compose-create":
 		logFilePath = path.Join(global.CONF.System.TmpDir, fmt.Sprintf("docker_logs/%s", req.Name))
+	case "ollama-model":
+		logFilePath = path.Join(global.CONF.System.DataDir, "log", "AITools", req.Name)
+	case "mysql-slow-logs":
+		logFilePath = path.Join(global.CONF.System.DataDir, fmt.Sprintf("apps/mysql/%s/data/1Panel-slow.log", req.Name))
+	case "mariadb-slow-logs":
+		logFilePath = path.Join(global.CONF.System.DataDir, fmt.Sprintf("apps/mariadb/%s/db/data/1Panel-slow.log", req.Name))
 	}
 
 	lines, isEndOfFile, total, err := files.ReadFileByLine(logFilePath, req.Page, req.PageSize, req.Latest)
@@ -500,4 +515,20 @@ func (f *FileService) ReadLogByLine(req request.FileReadByLineReq) (*response.Fi
 		Lines:   lines,
 	}
 	return res, nil
+}
+
+func (f *FileService) BatchCheckFiles(req request.FilePathsCheck) []response.ExistFileInfo {
+	fileList := make([]response.ExistFileInfo, 0, len(req.Paths))
+	for _, filePath := range req.Paths {
+		if info, err := os.Stat(filePath); err == nil {
+			fileList = append(fileList, response.ExistFileInfo{
+				Size:    float64(info.Size()),
+				Name:    info.Name(),
+				Path:    filePath,
+				ModTime: info.ModTime(),
+				IsDir:   info.IsDir(),
+			})
+		}
+	}
+	return fileList
 }

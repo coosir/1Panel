@@ -1,7 +1,7 @@
 <template>
     <div>
         <RouterButton :buttons="routerButton" />
-        <LayoutContent :title="$t('website.ssl')">
+        <LayoutContent :title="$t('website.ssl', 2)">
             <template #toolbar>
                 <div class="flex flex-wrap gap-3">
                     <el-button type="primary" @click="openSSL()">
@@ -45,8 +45,15 @@
                         fix
                         show-overflow-tooltip
                         prop="domains"
+                        min-width="150px"
                     ></el-table-column>
-                    <el-table-column :label="$t('ssl.applyType')" fix show-overflow-tooltip prop="provider">
+                    <el-table-column
+                        :label="$t('ssl.applyType')"
+                        fix
+                        show-overflow-tooltip
+                        prop="provider"
+                        min-width="180px"
+                    >
                         <template #default="{ row }">{{ getProvider(row.provider) }}</template>
                     </el-table-column>
                     <el-table-column
@@ -54,6 +61,7 @@
                         fix
                         show-overflow-tooltip
                         prop="acmeAccount.email"
+                        min-width="180px"
                     ></el-table-column>
                     <el-table-column
                         :label="$t('commons.table.status')"
@@ -97,8 +105,9 @@
                         fix
                         show-overflow-tooltip
                         prop="organization"
+                        min-width="110px"
                     ></el-table-column>
-                    <el-table-column :label="$t('website.remark')" fix prop="description">
+                    <el-table-column :label="$t('website.remark')" fix prop="description" min-width="100px">
                         <template #default="{ row }">
                             <fu-read-write-switch>
                                 <template #read>
@@ -110,7 +119,7 @@
                             </fu-read-write-switch>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="$t('ssl.autoRenew')" fix>
+                    <el-table-column :label="$t('ssl.autoRenew')" fix min-width="110px">
                         <template #default="{ row }">
                             <el-switch
                                 :disabled="row.provider === 'dnsManual' || row.provider === 'manual'"
@@ -192,7 +201,7 @@ let selects = ref<any>([]);
 
 const routerButton = [
     {
-        label: i18n.global.t('website.ssl'),
+        label: i18n.global.t('website.ssl', 2),
         path: '/websites/ssl',
     },
 ];

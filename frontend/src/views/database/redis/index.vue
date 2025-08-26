@@ -60,7 +60,7 @@
                             {{ $t('database.databaseConnInfo') }}
                         </el-button>
                         <el-button @click="goRemoteDB" type="primary" plain>
-                            {{ $t('database.remoteDB') }}
+                            {{ $t('database.manageRemoteDB') }}
                         </el-button>
                     </div>
                 </div>
@@ -96,18 +96,18 @@
         </div>
 
         <div v-if="dbOptionsLocal.length === 0 && dbOptionsRemote.length === 0">
-            <LayoutContent :title="'Redis ' + $t('menu.database')" :divider="true">
+            <LayoutContent :title="'Redis ' + $t('menu.database').toLowerCase()" :divider="true">
                 <template #main>
                     <div class="app-warn">
-                        <div>
+                        <div class="flex flex-col gap-2 items-center justify-center w-full sm:flex-row">
                             <span>{{ $t('app.checkInstalledWarn', ['Redis']) }}</span>
-                            <span @click="goRouter('app')">
-                                <el-icon class="ml-2"><Position /></el-icon>
+                            <span @click="goRouter('app')" class="flex items-center justify-center gap-0.5">
+                                <el-icon><Position /></el-icon>
                                 {{ $t('database.goInstall') }}
                             </span>
-                            <div>
-                                <img src="@/assets/images/no_app.svg" />
-                            </div>
+                        </div>
+                        <div>
+                            <img src="@/assets/images/no_app.svg" />
                         </div>
                     </div>
                 </template>
@@ -213,6 +213,10 @@ const onLoadConn = async () => {
         database: currentDBName.value,
     });
 };
+//
+// const mobile = computed(() => {
+//     return globalStore.isMobile();
+// });
 
 const goRouter = async (target: string) => {
     if (target === 'app') {
@@ -305,8 +309,8 @@ const initTerminal = async () => {
             terminalShow.value = true;
             redisStatus.value = 'Running';
             terminalRef.value.acceptParams({
-                endpoint: '/api/v1/databases/redis/exec',
-                args: `name=${currentDBName.value}&from=${currentDB.value.from}`,
+                endpoint: '/api/v1/containers/exec',
+                args: `source=redis&name=${currentDBName.value}&from=${currentDB.value.from}`,
                 error: '',
                 initCmd: '',
             });
@@ -323,8 +327,8 @@ const initTerminal = async () => {
                 if (res.data.status === 'Running') {
                     terminalShow.value = true;
                     terminalRef.value.acceptParams({
-                        endpoint: '/api/v1/databases/redis/exec',
-                        args: `name=${currentDBName.value}&from=${currentDB.value.from}`,
+                        endpoint: '/api/v1/containers/exec',
+                        args: `source=redis&name=${currentDBName.value}&from=${currentDB.value.from}`,
                         error: '',
                         initCmd: '',
                     });

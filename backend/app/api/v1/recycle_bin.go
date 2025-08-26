@@ -12,8 +12,9 @@ import (
 // @Summary List Recycle Bin files
 // @Accept json
 // @Param request body dto.PageInfo true "request"
-// @Success 200
+// @Success 200 {object} dto.PageResult
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/recycle/search [post]
 func (b *BaseApi) SearchRecycleBinFile(c *gin.Context) {
 	var req dto.PageInfo
@@ -37,6 +38,7 @@ func (b *BaseApi) SearchRecycleBinFile(c *gin.Context) {
 // @Param request body request.RecycleBinReduce true "request"
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/recycle/reduce [post]
 // @x-panel-log {"bodyKeys":["name"],"paramKeys":[],"BeforeFunctions":[],"formatZH":"还原回收站文件 [name]","formatEN":"Reduce RecycleBin file [name]"}
 func (b *BaseApi) ReduceRecycleBinFile(c *gin.Context) {
@@ -56,6 +58,7 @@ func (b *BaseApi) ReduceRecycleBinFile(c *gin.Context) {
 // @Accept json
 // @Success 200
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/recycle/clear [post]
 // @x-panel-log {"bodyKeys":[],"paramKeys":[],"BeforeFunctions":[],"formatZH":"清空回收站","formatEN":"清空回收站"}
 func (b *BaseApi) ClearRecycleBinFile(c *gin.Context) {
@@ -69,8 +72,9 @@ func (b *BaseApi) ClearRecycleBinFile(c *gin.Context) {
 // @Tags File
 // @Summary Get Recycle Bin status
 // @Accept json
-// @Success 200
+// @Success 200 {string} content
 // @Security ApiKeyAuth
+// @Security Timestamp
 // @Router /files/recycle/status [get]
 func (b *BaseApi) GetRecycleStatus(c *gin.Context) {
 	settingInfo, err := settingService.GetSettingInfo()

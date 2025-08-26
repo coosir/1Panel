@@ -1,7 +1,7 @@
 <template>
-    <el-card class="router_card">
-        <div class="flex w-full flex-col items-center md:justify-between md:flex-row">
-            <el-radio-group v-model="activeName" @change="handleChange">
+    <el-card class="router_card p-1 sm:p-0">
+        <div class="flex w-full flex-col justify-start sm:items-center items-start sm:justify-between sm:flex-row">
+            <el-radio-group v-model="activeName" @change="handleChange" class="flex-1">
                 <el-radio-button
                     class="router_card_button"
                     :label="button.label"
@@ -15,7 +15,7 @@
                     </el-badge>
                 </el-radio-button>
             </el-radio-group>
-            <div class="flex flex-row gap-2 md:flex-col lg:flex-row">
+            <div class="flex flex-col gap-2 sm:flex-row">
                 <slot name="route-button"></slot>
             </div>
         </div>

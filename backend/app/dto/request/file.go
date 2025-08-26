@@ -76,7 +76,12 @@ type FileRename struct {
 }
 
 type FilePathCheck struct {
-	Path string `json:"path" validate:"required"`
+	Path     string `json:"path" validate:"required"`
+	WithInit bool   `json:"withInit"`
+}
+
+type FilePathsCheck struct {
+	Paths []string `json:"paths" validate:"required"`
 }
 
 type FileWget struct {
@@ -87,11 +92,12 @@ type FileWget struct {
 }
 
 type FileMove struct {
-	Type     string   `json:"type" validate:"required"`
-	OldPaths []string `json:"oldPaths" validate:"required"`
-	NewPath  string   `json:"newPath" validate:"required"`
-	Name     string   `json:"name"`
-	Cover    bool     `json:"cover"`
+	Type       string   `json:"type" validate:"required"`
+	OldPaths   []string `json:"oldPaths" validate:"required"`
+	NewPath    string   `json:"newPath" validate:"required"`
+	Name       string   `json:"name"`
+	Cover      bool     `json:"cover"`
+	CoverPaths []string `json:"coverPaths"`
 }
 
 type FileDownload struct {

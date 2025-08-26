@@ -39,7 +39,7 @@
                                 class="ml-1 text-xs"
                                 type="primary"
                                 target="_blank"
-                                href="https://1panel.cn/docs/user_manual/settings/#3"
+                                :href="globalStore.docsUrl + '/user_manual/settings/#3'"
                             >
                                 {{ $t('commons.button.helpDoc') }}
                             </el-link>
@@ -68,7 +68,7 @@
                             </div>
                         </div>
                         <el-divider class="divider" />
-                        <div v-if="s3Data.id !== 0" style="margin-left: 20px">
+                        <div v-if="s3Data.id !== 0" class="ml-5">
                             <el-form-item label="Region">
                                 {{ s3Data.varsJson['region'] }}
                             </el-form-item>
@@ -102,7 +102,7 @@
                         </div>
                         <el-alert v-else center class="alert" style="height: 257px" :closable="false">
                             <el-button size="large" round plain type="primary" @click="onOpenDialog('create', 'S3')">
-                                {{ $t('setting.createBackupAccount', [$t('setting.S3')]) }}
+                                {{ $t('setting.addBackupAccount', [$t('setting.S3')]) }}
                             </el-button>
                         </el-alert>
                     </el-col>
@@ -127,7 +127,7 @@
                         </div>
 
                         <el-divider class="divider" />
-                        <div v-if="ossData.id !== 0" style="margin-left: 20px">
+                        <div v-if="ossData.id !== 0" class="ml-5">
                             <el-form-item label="Endpoint">
                                 {{ ossData.varsJson['endpoint'] }}
                             </el-form-item>
@@ -158,7 +158,7 @@
                         </div>
                         <el-alert v-else center class="alert" style="height: 257px" :closable="false">
                             <el-button size="large" round plain type="primary" @click="onOpenDialog('create', 'OSS')">
-                                {{ $t('setting.createBackupAccount', [$t('setting.OSS')]) }}
+                                {{ $t('setting.addBackupAccount', [$t('setting.OSS')]) }}
                             </el-button>
                         </el-alert>
                     </el-col>
@@ -215,7 +215,7 @@
                         </div>
                         <el-alert v-else center class="alert" style="height: 257px" :closable="false">
                             <el-button size="large" round plain type="primary" @click="onOpenDialog('create', 'COS')">
-                                {{ $t('setting.createBackupAccount', [$t('setting.COS')]) }}
+                                {{ $t('setting.addBackupAccount', [$t('setting.COS')]) }}
                             </el-button>
                         </el-alert>
                     </el-col>
@@ -277,7 +277,7 @@
                                 type="primary"
                                 @click="onOpenDialog('create', 'OneDrive')"
                             >
-                                {{ $t('setting.createBackupAccount', [$t('setting.OneDrive')]) }}
+                                {{ $t('setting.addBackupAccount', [$t('setting.OneDrive')]) }}
                             </el-button>
                         </el-alert>
                     </el-col>
@@ -321,7 +321,7 @@
                         </div>
                         <el-alert v-else center class="alert" style="height: 257px" :closable="false">
                             <el-button size="large" round plain type="primary" @click="onOpenDialog('create', 'KODO')">
-                                {{ $t('setting.createBackupAccount', [$t('setting.KODO')]) }}
+                                {{ $t('setting.addBackupAccount', [$t('setting.KODO')]) }}
                             </el-button>
                         </el-alert>
                     </el-col>
@@ -362,7 +362,7 @@
                         </div>
                         <el-alert v-else center class="alert" style="height: 257px" :closable="false">
                             <el-button size="large" round plain type="primary" @click="onOpenDialog('create', 'MINIO')">
-                                {{ $t('setting.createBackupAccount', [$t('setting.MINIO')]) }}
+                                {{ $t('setting.addBackupAccount', [$t('setting.MINIO')]) }}
                             </el-button>
                         </el-alert>
                     </el-col>
@@ -405,7 +405,7 @@
                         </div>
                         <el-alert v-else center class="alert" style="height: 257px" :closable="false">
                             <el-button size="large" round plain type="primary" @click="onOpenDialog('create', 'SFTP')">
-                                {{ $t('setting.createBackupAccount', [$t('setting.SFTP')]) }}
+                                {{ $t('setting.addBackupAccount', [$t('setting.SFTP')]) }}
                             </el-button>
                         </el-alert>
                     </el-col>
@@ -449,7 +449,7 @@
                                 type="primary"
                                 @click="onOpenDialog('create', 'WebDAV')"
                             >
-                                {{ $t('setting.createBackupAccount', ['WebDAV']) }}
+                                {{ $t('setting.addBackupAccount', ['WebDAV']) }}
                             </el-button>
                         </el-alert>
                     </el-col>
@@ -486,6 +486,9 @@ import { Backup } from '@/api/interface/backup';
 import { ElForm } from 'element-plus';
 import i18n from '@/lang';
 import { MsgSuccess } from '@/utils/message';
+import { GlobalStore } from '@/store';
+
+const globalStore = GlobalStore();
 
 const data = ref();
 const opRef = ref();

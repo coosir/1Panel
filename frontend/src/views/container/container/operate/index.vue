@@ -131,10 +131,10 @@
                         </el-select>
                     </el-form-item>
 
-                    <el-form-item label="ipv4" prop="ipv4">
+                    <el-form-item label="IPv4" prop="ipv4">
                         <el-input v-model="dialogData.rowData!.ipv4" :placeholder="$t('container.inputIpv4')" />
                     </el-form-item>
-                    <el-form-item label="ipv6" prop="ipv6">
+                    <el-form-item label="IPv6" prop="ipv6">
                         <el-input v-model="dialogData.rowData!.ipv6" :placeholder="$t('container.inputIpv6')" />
                     </el-form-item>
 
@@ -359,18 +359,20 @@ const acceptParams = (params: DialogProps): void => {
         dialogData.value.rowData.memory = Number(dialogData.value.rowData.memory.toFixed(2));
 
         let itemCmd = '';
+        dialogData.value.rowData.cmd = dialogData.value.rowData?.cmd || [];
         for (const item of dialogData.value.rowData.cmd) {
             if (item.indexOf(' ') !== -1) {
-                itemCmd += `"${item.replaceAll('"', '\\"')}" `;
+                itemCmd += `"${escapeQuotes(item)}" `;
             } else {
                 itemCmd += item + ' ';
             }
         }
         dialogData.value.rowData.cmdStr = itemCmd.trimEnd();
         let itemEntrypoint = '';
+        dialogData.value.rowData.entrypoint = dialogData.value.rowData?.entrypoint || [];
         for (const item of dialogData.value.rowData.entrypoint) {
             if (item.indexOf(' ') !== -1) {
-                itemEntrypoint += `"${item.replaceAll('"', '\\"')}" `;
+                itemEntrypoint += `"${escapeQuotes(item)}" `;
             } else {
                 itemEntrypoint += item + ' ';
             }
@@ -504,14 +506,14 @@ const submit = async () => {
     }
     dialogData.value.rowData!.cmd = [];
     if (dialogData.value.rowData?.cmdStr) {
-        let itemCmd = splitWithQuotes(dialogData.value.rowData?.cmdStr);
+        let itemCmd = splitStringIgnoringQuotes(dialogData.value.rowData?.cmdStr);
         for (const item of itemCmd) {
             dialogData.value.rowData!.cmd.push(item.replace(/(?<!\\)"/g, '').replaceAll('\\"', '"'));
         }
     }
     dialogData.value.rowData!.entrypoint = [];
     if (dialogData.value.rowData?.entrypointStr) {
-        let itemEntrypoint = splitWithQuotes(dialogData.value.rowData?.entrypointStr);
+        let itemEntrypoint = splitStringIgnoringQuotes(dialogData.value.rowData?.entrypointStr);
         for (const item of itemEntrypoint) {
             dialogData.value.rowData!.entrypoint.push(item.replace(/(?<!\\)"/g, '').replaceAll('\\"', '"'));
         }
@@ -630,15 +632,25 @@ const isFromApp = (rowData: Container.ContainerHelper) => {
     return false;
 };
 
-const splitWithQuotes = (str) => {
-    str = str.replace(/\\"/g, '<quota>');
-    const regex = /(?=(?:[^'"]|['"][^'"]*['"])*$)\s+/g;
-    let parts = str.split(regex).filter(Boolean);
-    let returnList = [];
-    for (const item of parts) {
-        returnList.push(item.replaceAll('<quota>', '\\"'));
+const escapeQuotes = (input) => {
+    return input.replace(/(?<!\\)"/g, '\\"');
+};
+
+const splitStringIgnoringQuotes = (input) => {
+    input = input.replace(/\\"/g, '<quota>');
+    const regex = /"([^"]*)"|(\S+)/g;
+    const result = [];
+    let match;
+
+    while ((match = regex.exec(input)) !== null) {
+        if (match[1]) {
+            result.push(match[1].replaceAll('<quota>', '\\"'));
+        } else if (match[2]) {
+            result.push(match[2].replaceAll('<quota>', '\\"'));
+        }
     }
-    return returnList;
+
+    return result;
 };
 defineExpose({
     acceptParams,

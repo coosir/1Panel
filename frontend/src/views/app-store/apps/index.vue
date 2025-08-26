@@ -1,5 +1,5 @@
 <template>
-    <LayoutContent v-loading="loading" v-if="!showDetail" :title="$t('app.app')">
+    <LayoutContent v-loading="loading" v-if="!showDetail" :title="$t('app.app', 2)">
         <template #toolbar>
             <el-row :gutter="5">
                 <el-col :xs="24" :sm="20" :md="20" :lg="20" :xl="20">
@@ -20,7 +20,7 @@
                             :type="activeTag === item.key ? 'primary' : ''"
                             :plain="activeTag !== item.key"
                         >
-                            {{ language == 'zh' || language == 'tw' ? item.name : item.key }}
+                            {{ item.name }}
                         </el-button>
                     </div>
                     <div class="inline">
@@ -42,7 +42,7 @@
                                         @click="changeTag(item.key)"
                                         :key="item.key"
                                     >
-                                        {{ language == 'zh' || language == 'tw' ? item.name : item.key }}
+                                        {{ item.name }}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
@@ -55,7 +55,7 @@
             </el-row>
         </template>
         <template #rightButton>
-            <div class="flex justify-end">
+            <div class="flex justify-end flex-col sm:flex-row">
                 <fu-table-pagination
                     v-model:current-page="paginationConfig.currentPage"
                     v-model:page-size="paginationConfig.pageSize"
@@ -129,17 +129,13 @@
                                         </div>
                                         <div class="app-desc">
                                             <span class="desc">
-                                                {{
-                                                    language == 'zh' || language == 'tw'
-                                                        ? app.shortDescZh
-                                                        : app.shortDescEn
-                                                }}
+                                                {{ app.description }}
                                             </span>
                                         </div>
                                         <div class="app-tag">
                                             <el-tag v-for="(tag, ind) in app.tags" :key="ind" class="p-mr-5">
                                                 <span>
-                                                    {{ language == 'zh' || language == 'tw' ? tag.name : tag.key }}
+                                                    {{ tag.name }}
                                                 </span>
                                             </el-tag>
                                             <el-tag v-if="app.status === 'TakeDown'" class="p-mr-5">
@@ -177,16 +173,11 @@ import Detail from '../detail/index.vue';
 import Install from '../detail/install/index.vue';
 import router from '@/routers';
 import { GlobalStore } from '@/store';
-import { getLanguage } from '@/utils/util';
-
 const globalStore = GlobalStore();
 
 const mobile = computed(() => {
     return globalStore.isMobile();
 });
-
-const language = getLanguage();
-
 const paginationConfig = reactive({
     cacheSizeKey: 'app-page-size',
     currentPage: 1,
@@ -270,7 +261,7 @@ const changeTag = (key: string) => {
 const getTagValue = (key: string) => {
     const tag = tags.value.find((tag) => tag.key === key);
     if (tag) {
-        return language == 'zh' || language == 'tw' ? tag.name : tag.key;
+        return tag.name;
     }
 };
 

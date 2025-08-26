@@ -17,12 +17,12 @@
                     <span>{{ $t('firewall.firewallNotStart') }}</span>
                 </el-card>
 
-                <LayoutContent :title="$t('firewall.forwardRule')" :class="{ mask: fireStatus != 'running' }">
+                <LayoutContent :title="$t('firewall.forwardRule', 2)" :class="{ mask: fireStatus != 'running' }">
                     <template #toolbar>
                         <div class="flex justify-between gap-2 flex-wrap sm:flex-row">
                             <div class="flex flex-wrap gap-3">
                                 <el-button type="primary" @click="onOpenDialog('create')">
-                                    {{ $t('commons.button.create') }}{{ $t('firewall.forwardRule') }}
+                                    {{ $t('firewall.createForwardRule') }}
                                 </el-button>
                                 <el-button @click="onDelete(null)" plain :disabled="selects.length === 0">
                                     {{ $t('commons.button.delete') }}
@@ -61,15 +61,15 @@
                 <LayoutContent :title="$t('firewall.firewall')" :divider="true">
                     <template #main>
                         <div class="app-warn">
-                            <div>
+                            <div class="flex flex-col gap-2 items-center justify-center w-full sm:flex-row">
                                 <span>{{ $t('firewall.notSupport') }}</span>
-                                <span @click="toDoc">
-                                    <el-icon class="ml-2"><Position /></el-icon>
+                                <span @click="toDoc" class="flex items-center justify-center gap-0.5">
+                                    <el-icon><Position /></el-icon>
                                     {{ $t('firewall.quickJump') }}
                                 </span>
-                                <div>
-                                    <img src="@/assets/images/no_app.svg" />
-                                </div>
+                            </div>
+                            <div>
+                                <img src="@/assets/images/no_app.svg" />
                             </div>
                         </div>
                     </template>
@@ -77,7 +77,18 @@
             </div>
         </div>
 
-        <OpDialog ref="opRef" @search="search" />
+        <OpDialog ref="opRef" @search="search" @submit="onSubmitDelete()">
+            <template #content>
+                <el-form class="mt-4 mb-1" ref="deleteForm" label-position="left">
+                    <el-form-item>
+                        <el-checkbox v-model="forceDelete" :label="$t('website.forceDelete')" />
+                        <span class="input-help">
+                            {{ $t('website.forceDeleteHelper') }}
+                        </span>
+                    </el-form-item>
+                </el-form>
+            </template>
+        </OpDialog>
         <OperateDialog @search="search" ref="dialogRef" />
     </div>
 </template>
@@ -90,6 +101,10 @@ import { onMounted, reactive, ref } from 'vue';
 import { operateForwardRule, searchFireRule } from '@/api/modules/host';
 import { Host } from '@/api/interface/host';
 import i18n from '@/lang';
+import { GlobalStore } from '@/store';
+import { MsgSuccess } from '@/utils/message';
+
+const globalStore = GlobalStore();
 
 const loading = ref();
 const activeTag = ref('forward');
@@ -104,6 +119,8 @@ const fireName = ref();
 const fireStatusRef = ref();
 
 const opRef = ref();
+const forceDelete = ref(false);
+const operateRules = ref();
 
 const data = ref();
 const paginationConfig = reactive({
@@ -157,7 +174,7 @@ const onOpenDialog = async (
     dialogRef.value!.acceptParams(params);
 };
 const toDoc = () => {
-    window.open('https://1panel.cn/docs/user_manual/hosts/firewall/', '_blank', 'noopener,noreferrer');
+    window.open(globalStore.docsUrl + '/user_manual/hosts/firewall/', '_blank', 'noopener,noreferrer');
 };
 const onDelete = async (row: Host.RuleForward | null) => {
     let names = [];
@@ -177,6 +194,7 @@ const onDelete = async (row: Host.RuleForward | null) => {
             });
         }
     }
+    operateRules.value = rules;
     opRef.value.acceptParams({
         title: i18n.global.t('commons.button.delete'),
         names: names,
@@ -184,9 +202,22 @@ const onDelete = async (row: Host.RuleForward | null) => {
             i18n.global.t('firewall.forwardRule'),
             i18n.global.t('commons.button.delete'),
         ]),
-        api: operateForwardRule,
-        params: { rules: rules },
+        api: null,
+        params: null,
     });
+};
+
+const onSubmitDelete = async () => {
+    loading.value = true;
+    await operateForwardRule({ rules: operateRules.value, forceDelete: forceDelete.value })
+        .then(() => {
+            loading.value = false;
+            MsgSuccess(i18n.global.t('commons.msg.deleteSuccess'));
+            search();
+        })
+        .catch(() => {
+            loading.value = false;
+        });
 };
 
 const buttons = [
@@ -205,6 +236,7 @@ const buttons = [
 ];
 
 onMounted(() => {
+    forceDelete.value = false;
     if (fireName.value !== '-') {
         loading.value = true;
         fireStatusRef.value.acceptParams();

@@ -28,12 +28,12 @@
             </el-card>
         </div>
         <div v-if="form.isExist">
-            <LayoutContent v-loading="loading" title="FTP">
+            <LayoutContent v-loading="loading" :title="$t('toolbox.ftp.ftp', 2)">
                 <template #toolbar>
                     <div class="flex justify-between gap-2 flex-wrap sm:flex-row">
                         <div class="flex flex-wrap gap-3">
                             <el-button type="primary" :disabled="!form.isActive" @click="onOpenDialog('add')">
-                                {{ $t('commons.button.add') }} FTP
+                                {{ $t('commons.button.add') }} {{ $t('toolbox.ftp.ftp') }}
                             </el-button>
                             <el-button @click="onSync()" :disabled="!form.isActive">
                                 {{ $t('commons.button.sync') }}
@@ -148,15 +148,15 @@
             <LayoutContent title="FTP" :divider="true">
                 <template #main>
                     <div class="app-warn">
-                        <div>
+                        <div class="flex flex-col gap-2 items-center justify-center w-full sm:flex-row">
                             <span>{{ $t('toolbox.ftp.noFtp') }}</span>
-                            <span @click="toDoc">
-                                <el-icon class="ml-2"><Position /></el-icon>
+                            <span @click="toDoc" class="flex items-center justify-center gap-0.5">
+                                <el-icon><Position /></el-icon>
                                 {{ $t('firewall.quickJump') }}
                             </span>
-                            <div>
-                                <img src="@/assets/images/no_app.svg" />
-                            </div>
+                        </div>
+                        <div>
+                            <img src="@/assets/images/no_app.svg" />
                         </div>
                     </div>
                 </template>
@@ -178,6 +178,9 @@ import OperateDialog from '@/views/toolbox/ftp/operate/index.vue';
 import LogDialog from '@/views/toolbox/ftp/log/index.vue';
 import { Toolbox } from '@/api/interface/toolbox';
 import router from '@/routers';
+import { GlobalStore } from '@/store';
+
+const globalStore = GlobalStore();
 
 const loading = ref();
 const selects = ref<any>([]);
@@ -232,7 +235,7 @@ const search = async (column?: any) => {
 };
 
 const toDoc = () => {
-    window.open('https://1panel.cn/docs/user_manual/toolbox/ftp/', '_blank', 'noopener,noreferrer');
+    window.open(globalStore.docsUrl + '/user_manual/toolbox/ftp/', '_blank', 'noopener,noreferrer');
 };
 
 const toFolder = (folder: string) => {
@@ -327,7 +330,7 @@ const onDelete = async (row: Toolbox.FtpInfo | null) => {
         title: i18n.global.t('commons.button.delete'),
         names: names,
         msg: i18n.global.t('commons.msg.operatorHelper', [
-            i18n.global.t('cronjob.cronTask'),
+            i18n.global.t('toolbox.ftp.ftp'),
             i18n.global.t('commons.button.delete'),
         ]),
         api: null,

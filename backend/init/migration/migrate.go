@@ -98,6 +98,19 @@ func Init() {
 
 		migrations.AddAutoRestart,
 		migrations.AddApiInterfaceConfig,
+		migrations.AddApiKeyValidityTime,
+
+		migrations.UpdateAppTag,
+		migrations.UpdateApp,
+		migrations.AddOllamaModel,
+		migrations.AddAppMenu,
+		migrations.AddAppPanelName,
+		migrations.AddLicenseVerify,
+
+		migrations.AddMcpServer,
+		migrations.AddPbootCMSPHPExtensions,
+		migrations.DeleteV2Openresty,
+		migrations.UpdateOnedrive,
 	})
 	if err := m.Migrate(); err != nil {
 		global.LOG.Error(err)

@@ -7,6 +7,7 @@ import * as echarts from 'echarts';
 import { GlobalStore } from '@/store';
 import { computeSizeFromKBs, computeSizeFromKB, computeSizeFromMB } from '@/utils/util';
 import { storeToRefs } from 'pinia';
+import i18n from '@/lang';
 const globalStore = GlobalStore();
 const { isDarkTheme } = storeToRefs(globalStore);
 
@@ -148,31 +149,49 @@ function initChart() {
         z: 1,
         tooltip: props.option.tooltip || {
             trigger: 'axis',
-            formatter: function (datas: any) {
-                let res = datas[0].name + '<br/>';
+            formatter: function (dataList: any) {
+                let res = dataList[0].name + '<br/>';
                 switch (props.option.formatStr) {
                     case 'KB/s':
-                        for (const item of datas) {
-                            res += item.marker + ' ' + item.seriesName + '：' + computeSizeFromKBs(item.data) + '<br/>';
-                        }
-                        break;
-                    case 'KB':
-                        for (const item of datas) {
-                            res += item.marker + ' ' + item.seriesName + '：' + computeSizeFromKB(item.data) + '<br/>';
-                        }
-                        break;
-                    case 'MB':
-                        for (const item of datas) {
-                            res += item.marker + ' ' + item.seriesName + '：' + computeSizeFromMB(item.data) + '<br/>';
-                        }
-                        break;
-                    default:
-                        for (const item of datas) {
+                        for (const item of dataList) {
                             res +=
                                 item.marker +
                                 ' ' +
                                 item.seriesName +
-                                '：' +
+                                i18n.global.t('commons.colon') +
+                                computeSizeFromKBs(item.data) +
+                                '<br/>';
+                        }
+                        break;
+                    case 'KB':
+                        for (const item of dataList) {
+                            res +=
+                                item.marker +
+                                ' ' +
+                                item.seriesName +
+                                i18n.global.t('commons.colon') +
+                                computeSizeFromKB(item.data) +
+                                '<br/>';
+                        }
+                        break;
+                    case 'MB':
+                        for (const item of dataList) {
+                            res +=
+                                item.marker +
+                                ' ' +
+                                item.seriesName +
+                                i18n.global.t('commons.colon') +
+                                computeSizeFromMB(item.data) +
+                                '<br/>';
+                        }
+                        break;
+                    default:
+                        for (const item of dataList) {
+                            res +=
+                                item.marker +
+                                ' ' +
+                                item.seriesName +
+                                i18n.global.t('commons.colon') +
                                 item.data +
                                 props.option.formatStr +
                                 '<br/>';

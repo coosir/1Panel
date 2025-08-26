@@ -166,6 +166,7 @@
                                         <el-option label="Java" value="java"></el-option>
                                         <el-option label="Go" value="go"></el-option>
                                         <el-option label="Python" value="python"></el-option>
+                                        <el-option label=".NET" value="dotnet"></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
@@ -504,9 +505,9 @@ const changeType = (type: string) => {
 
 const searchAppInstalled = () => {
     GetAppInstalled({ type: 'website', unused: true, all: true, page: 1, pageSize: 100 }).then((res) => {
-        appInstalls.value = res.data;
-        if (res.data && res.data.length > 0) {
-            website.value.appInstallId = res.data[0].id;
+        appInstalls.value = res.data.items;
+        if (res.data.items && res.data.items.length > 0) {
+            website.value.appInstallId = res.data.items[0].id;
         }
     });
 };
