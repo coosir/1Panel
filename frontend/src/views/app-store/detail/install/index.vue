@@ -163,6 +163,7 @@ import i18n from '@/lang';
 import { MsgError } from '@/utils/message';
 import { Container } from '@/api/interface/container';
 import { loadResourceLimit } from '@/api/modules/container';
+import { load } from 'js-yaml';
 
 const extensions = [yaml(), oneDark];
 const router = useRouter();
@@ -193,8 +194,8 @@ const initData = () => ({
     name: '',
     advanced: true,
     cpuQuota: 0,
-    memoryLimit: 0,
-    memoryUnit: 'M',
+    memoryLimit: 1,
+    memoryUnit: 'G',
     containerName: '',
     allowPort: true,
     editCompose: false,
@@ -265,6 +266,7 @@ const getAppDetail = async (version: string) => {
         const res = await GetAppDetail(installData.value.app.id, version, 'app');
         req.appDetailId = res.data.id;
         req.dockerCompose = res.data.dockerCompose;
+        parseDockerCompose(req.dockerCompose);
         isHostMode.value = res.data.hostMode;
         installData.value.params = res.data.params;
         paramKey.value++;
@@ -273,6 +275,57 @@ const getAppDetail = async (version: string) => {
     } finally {
         loading.value = false;
     }
+};
+
+const parseDockerCompose = (composeStr: string) => {
+    try {
+        const doc = load(composeStr) as any;
+        if (doc && doc.services) {
+            for (const serviceName in doc.services) {
+                const service = doc.services[serviceName];
+                let memory = service?.deploy?.resources?.limits?.memory;
+                if (!memory) {
+                    memory = service?.mem_limit;
+                }
+                if (memory) {
+                    const { size, unit } = parseMemory(memory);
+                    if (size > 0) {
+                        req.memoryLimit = size;
+                        req.memoryUnit = unit;
+                        break;
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Failed to parse docker-compose', error);
+    }
+};
+
+const parseMemory = (memoryStr: string | number): { size: number; unit: string } => {
+    if (typeof memoryStr === 'number') {
+        return convertBytesToUnit(memoryStr);
+    }
+    const match = memoryStr.match(/^(\d+(?:\.\d+)?)\s*([a-zA-Z]+)$/);
+    if (match) {
+        const value = parseFloat(match[1]);
+        const unit = match[2].toUpperCase();
+        if (unit.startsWith('G')) return { size: value, unit: 'G' };
+        if (unit.startsWith('M')) return { size: value, unit: 'M' };
+        if (unit.startsWith('K')) return { size: Number((value / 1024).toFixed(2)), unit: 'M' };
+        if (unit.startsWith('B')) return convertBytesToUnit(value);
+    }
+    if (!isNaN(Number(memoryStr))) {
+        return convertBytesToUnit(Number(memoryStr));
+    }
+    return { size: 0, unit: 'M' };
+};
+
+const convertBytesToUnit = (bytes: number): { size: number; unit: string } => {
+    if (bytes >= 1073741824) {
+        return { size: Number((bytes / 1073741824).toFixed(2)), unit: 'G' };
+    }
+    return { size: Number((bytes / 1048576).toFixed(2)), unit: 'M' };
 };
 
 const submit = async (formEl: FormInstance | undefined) => {
