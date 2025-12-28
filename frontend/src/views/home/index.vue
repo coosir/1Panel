@@ -8,7 +8,7 @@
                 },
             ]"
         >
-            <template #route-button>
+            <template #route-button v-if="false">
                 <div class="router-button" v-if="!isProductPro">
                     <el-button link type="primary" @click="toUpload">
                         {{ $t('license.levelUpPro') }}
@@ -244,6 +244,12 @@
                                         <span>{{ $t('home.runningTime') }}</span>
                                     </template>
                                     {{ loadUpTime(currentInfo.uptime) }}
+                                </el-descriptions-item>
+                                <el-descriptions-item class-name="system-content" label-class-name="system-label">
+                                    <template #label>
+                                        <span>面板版本</span>
+                                    </template>
+                                    1.10.33
                                 </el-descriptions-item>
                             </el-descriptions>
                         </div>
