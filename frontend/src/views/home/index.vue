@@ -169,7 +169,7 @@
             <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
                 <CardWithHeader :header="$t('home.systemInfo')">
                     <template #body>
-                        <div class="h-systemInfo">
+                        <div class="h-systemInfo" style="height:auto;">
                             <el-descriptions :column="1" border>
                                 <el-descriptions-item class-name="system-content" label-class-name="system-label">
                                     <template #label>
